@@ -87,6 +87,9 @@
 
 				H.eye_color = "ff0000"
 				H.voice_color = "ff0000"
+	// OV Edit Start
+	update_sight()
+	// OV Edit End
 
 /mob/living/proc/get_stat(stat)
 	if(!stat)
@@ -169,6 +172,9 @@
 			STAPER = newamt
 
 			update_fov_angles()
+			// OV Edit Start
+			update_sight()
+			// OV Edit End
 
 		if(STATKEY_INT)
 			newamt = STAINT + amt
@@ -385,4 +391,7 @@
 	STAWIL = 10
 	STASPD = 10
 	STALUC = 10
+	// OV Edit Start
+	update_sight()
+	// OV Edit End
 	return

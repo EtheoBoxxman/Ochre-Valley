@@ -834,9 +834,21 @@
 		if(!isnull(G.lighting_alpha))
 			lighting_alpha = min(lighting_alpha, G.lighting_alpha)
 
+	// OV Edit Start
 	if(HAS_TRAIT(src, TRAIT_DARKVISION))
-		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_DARKVISION)
-		see_in_dark = max(see_in_dark, 12)
+		var/perception = min(max(get_stat(STATKEY_PER), 1), 15)
+		var/perception_bonus = clamp(perception - 9, 0, 6)
+		var/vision_ratio = perception_bonus / 6
+		var/darksight_alpha = round(LIGHTING_PLANE_ALPHA_DARKVISION * (1 - vision_ratio))
+		var/darksight_level = 9 + perception_bonus
+
+		// 15 PER is the Darksight cap.
+		if(perception_bonus >= 6)
+			darksight_level = 15
+
+		lighting_alpha = min(lighting_alpha, darksight_alpha)
+		see_in_dark = max(see_in_dark, darksight_level)
+	// OV Edit End
 
 	if(HAS_TRAIT(src, TRAIT_NITEVISION))
 		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE)
