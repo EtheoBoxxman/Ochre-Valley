@@ -1,5 +1,17 @@
 // OV File
 
+/datum/intent/shoot/arquebus
+    chargetime = 1 // Fallback value if something that isn't a mob/living aims this.
+    chargedrain = 0
+
+/datum/intent/shoot/arquebus/get_chargetime()
+	if(mastermob) // chargetime isn't used here. Returning chargetime if it's falsy doesn't make any sense either.
+		var/newtime = 40
+		newtime -= mastermob.get_skill_level(/datum/skill/combat/firearms) * 4.6 // skill block
+		newtime -= mastermob.STAPER // per block
+		return max(newtime, 1) // Master skill and 16 PER will hit the aim time floor.
+	return chargetime
+
 /obj/item/gun/ballistic/arquebus/pistol
     name = "arquebus pistol"
     icon = 'icons/roguetown/weapons/32.dmi'
@@ -35,7 +47,7 @@
                 return list("shrink" = 0.3,"sx" = -2,"sy" = -5,"nx" = 4,"ny" = -5,"wx" = 0,"wy" = -5,"ex" = 2,"ey" = -5,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)
 
 /datum/intent/shoot/arquebus/pistol
-    chargetime = 1 SECONDS
+    chargetime = 1
     chargedrain = 0
 
 /datum/intent/shoot/arquebus/pistol/can_charge()
