@@ -21,10 +21,10 @@
 	if((mover.pass_flags & PASSMOB))
 		return TRUE
 	//OVEdit Start: More complex passthrough behavior.
-	if((mover.pass_flags & SIZEPASS))
+	if((mover.pass_flags & SIZEPASS) || (pass_flags & SIZEPASS))
 		if(ismob(mover) && isliving(mover))
 			var/mob/living/M = mover
-			if(istype(M.current_size, /datum/sizecat/micro) || !cmode)
+			if(istype(M.current_size, /datum/sizecat/micro) || istype(src.current_size, /datum/sizecat/micro) || !cmode)
 				return TRUE
 			return FALSE
 		return TRUE
