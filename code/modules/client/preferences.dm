@@ -2717,7 +2717,7 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 						cursed_animal = choice
 				
 				if("charflaw_cursed_animal_colour")
-					var/new_animal_colour = color_pick_sanitized(user, "Choose your character's cursed animal form color:", "Character Preference","[cursed_animal_colour]")
+					var/new_animal_colour = color_pick_sanitized(user, "Choose your character's cursed animal form color. NOTE: We recommend using light shades for colours as they add ontop of existing sprite colours.", "Character Preference","[cursed_animal_colour]")
 					if(new_animal_colour)
 						new_animal_colour = sanitize_hexcolor(new_animal_colour)
 						cursed_animal_colour = "#[new_animal_colour]"
