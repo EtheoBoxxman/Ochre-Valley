@@ -110,9 +110,11 @@
 	else if(isitem(parent))
 		var/obj/item/I = parent
 		I.remove_filter(outline_filter_id)
-		// Only delete the item if it's part of an incomplete fetch or courier quest
-		if(Q && !Q.complete && ((Q.quest_type == QUEST_RETRIEVAL && istype(I, Q.target_item_type)) || (Q.quest_type == QUEST_COURIER && istype(I, Q.target_delivery_item))))
-			qdel(I)
+		if(Q && !Q.complete)
+			if(Q.quest_type == QUEST_RETRIEVAL && Q.target_item_type && istype(I, Q.target_item_type))
+				qdel(I)
+			else if(Q.quest_type == QUEST_COURIER && Q.target_delivery_item && istype(I, Q.target_delivery_item))
+				qdel(I)
 	qdel(src)
 
 // ==================== SPECIALIZED COMPONENT SUBTYPES ====================
