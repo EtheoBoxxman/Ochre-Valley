@@ -279,24 +279,10 @@
 		return
 
 	restoring = TRUE
-<<<<<<< animal_TF
-	qdel(slink)
-	if (stored)
-		stored.forceMove(get_turf(src))
-		stored.notransform = FALSE
-
-		// leave a track to indicate something has shifted out here
-		var/obj/effect/track/the_evidence = new(stored.loc)
-		the_evidence.handle_creation(stored)
-		the_evidence.track_type = "expanding animal tracks into humanoid footprints"
-		the_evidence.ambiguous_track_type = "curious footprints"
-		the_evidence.base_diff = 6
-=======
 
 	if(slink)
 		qdel(slink)
 		slink = null
->>>>>>> main
 
 	if(!stored)
 		qdel(src)
@@ -310,13 +296,10 @@
 	if(original_turf)
 		temp.forceMove(original_turf)
 		hard_reset_spatial(temp)
-<<<<<<< animal_TF
 	
 	if(isbelly(shape.loc))
 		var/obj/belly/B = shape.loc
 		temp.forceMove(B)
-=======
->>>>>>> main
 
 	temp.notransform = FALSE
 
@@ -333,12 +316,9 @@
 	temp.Stun(200)
 	temp.apply_status_effect(/datum/status_effect/debuff/revived)
 	temp.adjust_fire_stacks(2)
-<<<<<<< animal_TF
 	
 	temp.mob_belly_transfer(shape)
 	VORE_PREF_TRANSFER(temp, shape)
 
-=======
->>>>>>> main
 	qdel(shape)
 	shape = null
