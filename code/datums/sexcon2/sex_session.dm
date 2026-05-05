@@ -176,7 +176,8 @@
 		return FALSE
 	// OV Edit Start
 	if(!user.Adjacent(target) && !action.ranged_action && !held_petrified_head)
-		return FALSE
+		if(!isbelly(user.loc) || user.loc != target.loc)
+			return FALSE
 	// OV Edit End
 	if(action.check_incapacitated && user.incapacitated())
 		return FALSE
