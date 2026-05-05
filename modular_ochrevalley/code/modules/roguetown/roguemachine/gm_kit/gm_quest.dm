@@ -32,12 +32,6 @@
 /datum/component/gm_quest/Initialize(no_outline_start, chosen_colour_start, target_area_start)
 	is_mob = ismob(parent)
 
-	if(no_outline_start)
-		message_admins("found no outline")
-	message_admins("found colour [chosen_colour_start]")
-	if(target_area)
-		message_admins("found target area [target_area_start]")
-
 	no_outline = no_outline_start
 	chosen_colour = "#[chosen_colour_start]"
 	target_area = target_area_start
