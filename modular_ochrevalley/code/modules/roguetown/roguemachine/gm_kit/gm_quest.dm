@@ -73,6 +73,8 @@
 	SIGNAL_HANDLER
 
 	examine_list += span_notice("This looks to be an important item!")
+	if(target_area)
+		examine_list += span_notice("This needs to be delivered to [target_area]!")
 
 /datum/component/gm_quest/proc/on_mob_examine(datum/source, mob/user, list/examine_list)
 	SIGNAL_HANDLER
