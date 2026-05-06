@@ -1028,6 +1028,13 @@
 	var/trait_exam = common_trait_examine()
 	if(!isnull(trait_exam))
 		. += trait_exam
+	
+	//OV edit
+	var/pvp_pref = get_pvp_icon()
+	if(pvp_pref)
+		. += span_notice("[SPAN_TOOLTIP("[get_badge_span("[pvp_pref]")]","[client.prefs?.directory_pvp]")]")
+	
+	//OV edit end
 
 	if(pose_text)
 		. += fieldset_block("Pose", pose_text, "pose_block")
@@ -1168,3 +1175,22 @@
 			return "[verbose ? "Conjured" : "(C. shaft)"]"
 		else
 			return null
+
+//OV edit
+/mob/living/proc/get_badge_span(badge_icon_state)
+	var/datum/asset/spritesheet/sheet = get_asset_datum(/datum/asset/spritesheet/pref_badges)
+	return sheet.icon_tag(badge_icon_state)
+
+/mob/living/carbon/human/proc/get_pvp_icon()
+	if(!client.prefs?.directory_pvp)
+		return
+	var/pvp_icon
+	switch(client.prefs.directory_pvp)
+		if("No PvP")
+			pvp_icon = "pvp_no"
+		if("Ask First")
+			pvp_icon = "pvp_ask"
+		if("Open to PvP")
+			pvp_icon = "pvp_yes"
+	return pvp_icon
+//OV edit end

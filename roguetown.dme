@@ -3474,6 +3474,7 @@
 #include "modular_ochrevalley\code\modules\logging\categories\log_category_href.dm"
 #include "modular_ochrevalley\code\modules\logging\categories\log_category_admin.dm"
 #include "modular_ochrevalley\code\modules\logging\categories\log_category_game.dm"
+#include "modular_ochrevalley\code\modules\vore\pref_spritesheets.dm"
 #include "modular_ochrevalley\code\modules\logging\categories\log_category_misc.dm"
 #include "modular_ochrevalley\code\modules\client\verbs\character_directory.dm"
 #include "modular_ochrevalley\code\modules\jobs\job_types\roguetown\adventurer\types\combat\spellblade_pre_rework.dm"
