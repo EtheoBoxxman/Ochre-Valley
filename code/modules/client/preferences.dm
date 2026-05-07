@@ -260,6 +260,15 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	/// Whether we can see the feint HUD bar.
 	var/feint_hud = FALSE 
 
+	//OV edit
+	var/badge_gng = "No"
+	var/badge_vore = "Unset"
+	var/badge_willing = "Unset"
+	var/badge_sexuality = "Unset"
+	var/badge_erp = "No" 
+	var/badge_lean = "Unset"
+	//OV edit end
+
 /datum/preferences/New(client/C)
 	parent = C
 	migrant  = new /datum/migrant_pref(src)
@@ -298,6 +307,19 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		directory_sexualitytag = "Unset"
 	if(!directory_pvp)
 		directory_pvp = "No PvP"
+	
+	if(!badge_gng)
+		badge_gng = "No"
+	if(!badge_vore)
+		badge_vore = "Unset"
+	if(!badge_willing)
+		badge_willing = "Unset"
+	if(!badge_sexuality)
+		badge_sexuality = "Unset"
+	if(!badge_erp)
+		badge_erp = "No" 
+	if(!badge_lean)
+		badge_lean = "Unset"
 	//OV edit end
 
 	//Set the race to properly run race setter logic
@@ -777,6 +799,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			dat += "<br><b>Sexuality Tag:</b> <a href='?_src_=prefs;preference=directory_sexualitytag;task=input'>[directory_sexualitytag || "Unset"]</a>"
 			dat += "<br><b>PvP Opt-In:</b> <a href='?_src_=prefs;preference=directory_pvp;task=input'>[directory_pvp || "No PvP"]</a>"
 			dat += "<br><b>Directory Ad:</b> <a href='?_src_=prefs;preference=directory_ad;task=input'>Set</a>"
+			dat += "<br><br><b>Preference Badges:</b> <a href='?_src_=prefs;preference=pref_badges;task=menu'>Open Menu</a>"
 			dat += "</td>"
 			dat += "</td>"
 			dat += "</tr></table>"
@@ -1658,6 +1681,23 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 	else if(href_list["preference"] == "descriptors")
 		show_descriptors_ui(user)
 		return
+	//OV edit
+	else if(href_list["preference"] == "pref_badges")
+		if(!badge_gng)
+			badge_gng = "No"
+		if(!badge_vore)
+			badge_vore = "Unset"
+		if(!badge_willing)
+			badge_willing = "Unset"
+		if(!badge_sexuality)
+			badge_sexuality = "Unset"
+		if(!badge_erp)
+			badge_erp = "No" 
+		if(!badge_lean)
+			badge_lean = "Unset"
+		show_pref_badge_ui(user)
+		return
+	//OV edit end
 
 	else if(href_list["preference"] == "lore_primer")
 		LorePopup(user)
@@ -1765,6 +1805,12 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 			handle_descriptors_topic(user, href_list)
 			show_descriptors_ui(user)
 			return
+		//OV edit
+		if("change_pref_badge")
+			handle_pref_badge_topic(user, href_list)
+			show_pref_badge_ui(user)
+			return
+		//OV edit end
 		if("change_culinary_preferences")
 			handle_culinary_topic(user, href_list)
 			show_culinary_ui(user)

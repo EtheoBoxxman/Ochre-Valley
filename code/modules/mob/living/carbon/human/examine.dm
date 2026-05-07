@@ -113,6 +113,13 @@
 			else
 				. = list(span_info("ø ------------ ø\nThis is the <EM>[used_name]</EM>, the [race_name]."))
 
+		//OV edit
+		var/pvp_pref = get_pvp_icon()
+		var/pvp_icon
+		if(pvp_pref)
+			pvp_icon = "[SPAN_TOOLTIP("[client.prefs?.directory_pvp]","[get_badge_span("[pvp_pref]")]")]"	
+		//OV edit end
+
 		//Origins
 		var/pronoun	//They / Their
 		if(!dna.species.use_skin_tone_wording_for_examine)
@@ -141,7 +148,7 @@
 				if(issunelf(src) || patron?.type == /datum/patron/divine/astrata)
 					astratan_symbol = icon2html('icons/misc/language.dmi', world, "celestial")
 					astratan_tooltip = SPAN_TOOLTIP("One of Astrata's [issunelf(src) ? "chosen" : "followers"]", astratan_symbol)
-		. += span_info("[pronoun] [wording] [origin]. [astratan_tooltip]")	//"He hails from [X / Nowhere]" || "His [word] originates from [X]" || "His [word] is implacable..."
+		. += span_info("[pvp_icon] [pronoun] [wording] [origin]. [astratan_tooltip]")	//OV EDIT //"He hails from [X / Nowhere]" || "His [word] originates from [X]" || "His [word] is implacable..."
 
 		if(HAS_TRAIT(src, TRAIT_WITCH))
 			if(HAS_TRAIT(user, TRAIT_NOBLE) || HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_WITCH))
@@ -1085,6 +1092,12 @@
 
 		. += app_str
 
+	//OV edit
+	var/pref_badge_line = build_pref_badges()
+	if(pref_badge_line)
+		. += "[pref_badge_line]"
+	//OV edit end
+
 	// Characters with the hunted flaw will freak out if they can't see someone's face.
 	if(!appears_dead)
 		if(skipface && user.has_flaw(/datum/charflaw/hunted) && user != src)
@@ -1100,13 +1113,6 @@
 	var/trait_exam = common_trait_examine()
 	if(!isnull(trait_exam))
 		. += trait_exam
-	
-	//OV edit
-	var/pvp_pref = get_pvp_icon()
-	if(pvp_pref)
-		. += span_notice("[SPAN_TOOLTIP("[get_badge_span("[pvp_pref]")]","[client.prefs?.directory_pvp]")]")
-	
-	//OV edit end
 
 	if(pose_text)
 		. += fieldset_block("Pose", pose_text, "pose_block")
@@ -1253,7 +1259,7 @@
 	var/datum/asset/spritesheet/sheet = get_asset_datum(/datum/asset/spritesheet/pref_badges)
 	return sheet.icon_tag(badge_icon_state)
 
-/mob/living/carbon/human/proc/get_pvp_icon()
+/mob/living/proc/get_pvp_icon()
 	if(!client.prefs?.directory_pvp)
 		return
 	var/pvp_icon
@@ -1265,4 +1271,81 @@
 		if("Open to PvP")
 			pvp_icon = "pvp_yes"
 	return pvp_icon
+
+/mob/living/proc/build_pref_badges()
+	if(!client.prefs)
+		return
+	var/pref_warning = " - Please check OOC notes for more details, do not rely on badges alone."
+	var/msg_gng = ""
+	var/msg_vore = ""
+	var/msg_willing = ""
+	var/msg_sexuality = ""
+	var/msg_erp = ""
+	var/msg_lean = ""
+	if(client.prefs.badge_gng == "Yes")
+		msg_gng = "[SPAN_TOOLTIP("Allows Grab and Gulp[pref_warning]","[get_badge_span("grab")]")]"
+	if(client.prefs.badge_vore)
+		switch(client.prefs.badge_vore)
+			if("Endo")
+				msg_vore = "[SPAN_TOOLTIP("Endo Only[pref_warning]","[get_badge_span("vore_endo")]")]"
+			if("Absorption")
+				msg_vore = "[SPAN_TOOLTIP("Absorption Only[pref_warning]","[get_badge_span("vore_absorb")]")]"
+			if("Digestion")
+				msg_vore = "[SPAN_TOOLTIP("Digestion Only[pref_warning]","[get_badge_span("vore_digest")]")]"
+			if("Endo and Absorption")
+				msg_vore = "[SPAN_TOOLTIP("Endo and Absorption[pref_warning]","[get_badge_span("vore_absorb_endo")]")]"
+			if("Endo and Digestion")
+				msg_vore = "[SPAN_TOOLTIP("Endo and Digestion[pref_warning]","[get_badge_span("vore_digest_endo")]")]"
+			if("Absorption and Digestion")
+				msg_vore = "[SPAN_TOOLTIP("Absorption and Digestion[pref_warning]","[get_badge_span("vore_digest_absorb")]")]"
+			if("All")
+				msg_vore = "[SPAN_TOOLTIP("Digestion, Absorption and Endo[pref_warning]","[get_badge_span("vore_digest_absorb_endo")]")]"
+	if(client.prefs.badge_willing)
+		switch(client.prefs.badge_willing)
+			if("Willing")
+				msg_willing = "[SPAN_TOOLTIP("Willing Only[pref_warning]","[get_badge_span("pref_willing")]")]"
+			if("Dubcon")
+				msg_willing = "[SPAN_TOOLTIP("Dubcon Only[pref_warning]","[get_badge_span("pref_dub")]")]"
+			if("Unwilling")
+				msg_willing = "[SPAN_TOOLTIP("Unwilling Only[pref_warning]","[get_badge_span("pref_unwilling")]")]"
+			if("Willing and Dubcon")
+				msg_willing = "[SPAN_TOOLTIP("Willing and Dubcon[pref_warning]","[get_badge_span("pref_dub_willing")]")]"
+			if("Willing and Unwilling")
+				msg_willing = "[SPAN_TOOLTIP("Willing and Unwilling[pref_warning]","[get_badge_span("pref_unwilling_willing")]")]"
+			if("Dubcon and Unwilling")
+				msg_willing = "[SPAN_TOOLTIP("Dubcon and Unwilling[pref_warning]","[get_badge_span("pref_unwilling_dub")]")]"
+			if("All")
+				msg_willing = "[SPAN_TOOLTIP("Willing, Dubcon and Unwilling[pref_warning]","[get_badge_span("pref_unwilling_dub_unwilling")]")]"
+	if(client.prefs.badge_sexuality)
+		switch(client.prefs.badge_sexuality)
+			if("Straight")
+				msg_sexuality = "[SPAN_TOOLTIP("Straight[pref_warning]","[get_badge_span("lgbt_straight")]")]"
+			if("Gay")
+				msg_sexuality = "[SPAN_TOOLTIP("Gay[pref_warning]","[get_badge_span("lgbt_gay")]")]"
+			if("Lesbian")
+				msg_sexuality = "[SPAN_TOOLTIP("Lesbian[pref_warning]","[get_badge_span("lgbt_lesbian")]")]"
+			if("Bisexual")
+				msg_sexuality = "[SPAN_TOOLTIP("Bisexual[pref_warning]","[get_badge_span("lgbt_bi")]")]"
+			if("Pansexual")
+				msg_sexuality = "[SPAN_TOOLTIP("Pansexual[pref_warning]","[get_badge_span("lgbt_pan")]")]"
+			if("Asexual")
+				msg_sexuality = "[SPAN_TOOLTIP("Asexual[pref_warning]","[get_badge_span("lgbt_ace")]")]"
+			if("Demisexual")
+				msg_sexuality = "[SPAN_TOOLTIP("Demisexual[pref_warning]","[get_badge_span("lgbt_demi")]")]"
+	if(client.prefs.badge_erp == "Yes")
+		msg_erp = "[SPAN_TOOLTIP("Interested in ERP outside of vore![pref_warning]","[get_badge_span("erp")]")]"
+	if(client.prefs.badge_lean)
+		switch(client.prefs.badge_lean)
+			if("Pred Only")
+				msg_lean = "[SPAN_TOOLTIP("Pred Only[pref_warning]","[get_badge_span("lean_pred")]")]"
+			if("Pred-leaning")
+				msg_lean = "[SPAN_TOOLTIP("Leaning towards Pred[pref_warning]","[get_badge_span("lean_pred_pref")]")]"
+			if("Switch")
+				msg_lean = "[SPAN_TOOLTIP("Switch[pref_warning]","[get_badge_span("lean_switch")]")]"
+			if("Prey-leaning")
+				msg_lean = "[SPAN_TOOLTIP("Leaning towards Prey[pref_warning]","[get_badge_span("lean_prey_pref")]")]"
+			if("Prey Only")
+				msg_lean = "[SPAN_TOOLTIP("Prey Only[pref_warning]","[get_badge_span("lean_prey")]")]"
+	var/badge_line = "[msg_gng][msg_lean][msg_vore][msg_willing][msg_sexuality][msg_erp]"
+	return badge_line
 //OV edit end
