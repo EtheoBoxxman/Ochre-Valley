@@ -267,6 +267,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/badge_sexuality = "Unset"
 	var/badge_erp = "No" 
 	var/badge_lean = "Unset"
+	var/badge_type = "Unset"
 	//OV edit end
 
 /datum/preferences/New(client/C)
@@ -320,6 +321,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 		badge_erp = "No" 
 	if(!badge_lean)
 		badge_lean = "Unset"
+	if(!badge_type)
+		badge_type = "Unset"
 	//OV edit end
 
 	//Set the race to properly run race setter logic
@@ -1695,6 +1698,8 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 			badge_erp = "No" 
 		if(!badge_lean)
 			badge_lean = "Unset"
+		if(!badge_type)
+			badge_type = "Unset"
 		show_pref_badge_ui(user)
 		return
 	//OV edit end

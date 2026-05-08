@@ -63,11 +63,18 @@
 
 	if(observer_privilege)
 		obscure_name = FALSE
+	
+	//OV edit
+	var/pvp_pref = get_pvp_icon()
+	var/pvp_icon
+	if(pvp_pref)
+		pvp_icon = "[SPAN_TOOLTIP("[client.prefs?.directory_pvp]","[get_badge_span("[pvp_pref]")]")]"	
+	//OV edit end
 
 	if(name in unknown_names)
-		. = list(span_info("ø ------------ ø\nThis is <EM>[name]</EM>."))
+		. = list(span_info("ø ------------ ø\n[pvp_icon] This is <EM>[name]</EM>.")) //OV EDIT
 	else if(obscure_name) // && !client?.prefs?.masked_examine) OV Edit - Allows Masked Individuals to still hide face and name but keep exmaine text
-		. = list(span_info("ø ------------ ø\nThis is an unknown <EM>[name]</EM>."))
+		. = list(span_info("ø ------------ ø\n[pvp_icon] This is an unknown <EM>[name]</EM>.")) //OV EDIT
 	else
 		on_examine_face(user)
 		var/used_name = name
@@ -112,13 +119,6 @@
 				. = list(span_info("ø ------------ ø\nThis is <EM>[used_name]</EM>, the [race_name] [used_title]."))
 			else
 				. = list(span_info("ø ------------ ø\nThis is the <EM>[used_name]</EM>, the [race_name]."))
-
-		//OV edit
-		var/pvp_pref = get_pvp_icon()
-		var/pvp_icon
-		if(pvp_pref)
-			pvp_icon = "[SPAN_TOOLTIP("[client.prefs?.directory_pvp]","[get_badge_span("[pvp_pref]")]")]"	
-		//OV edit end
 
 		//Origins
 		var/pronoun	//They / Their
@@ -1282,6 +1282,7 @@
 	var/msg_sexuality = ""
 	var/msg_erp = ""
 	var/msg_lean = ""
+	var/msg_type = ""
 	if(client.prefs.badge_gng == "Yes")
 		msg_gng = "[SPAN_TOOLTIP("Allows Grab and Gulp[pref_warning]","[get_badge_span("grab")]")]"
 	if(client.prefs.badge_vore)
@@ -1346,6 +1347,38 @@
 				msg_lean = "[SPAN_TOOLTIP("Leaning towards Prey[pref_warning]","[get_badge_span("lean_prey_pref")]")]"
 			if("Prey Only")
 				msg_lean = "[SPAN_TOOLTIP("Prey Only[pref_warning]","[get_badge_span("lean_prey")]")]"
-	var/badge_line = "[msg_gng][msg_lean][msg_vore][msg_willing][msg_sexuality][msg_erp]"
+	if(client.prefs.badge_type)
+		switch(client.prefs.badge_type)
+			if("OV")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore[pref_warning]","[get_badge_span("type_ov")]")]"
+			if("AV")
+				msg_type = "[SPAN_TOOLTIP("Anal Vore[pref_warning]","[get_badge_span("type_av")]")]"
+			if("CV")
+				msg_type = "[SPAN_TOOLTIP("Cock Vore[pref_warning]","[get_badge_span("type_cv")]")]"
+			if("UB")
+				msg_type = "[SPAN_TOOLTIP("Unbirth[pref_warning]","[get_badge_span("type_ub")]")]"
+			if("OV and AV")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore and Anal Vore[pref_warning]","[get_badge_span("type_ov_av")]")]"
+			if("OV and CV")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore and Cock Vore[pref_warning]","[get_badge_span("type_ov_cv")]")]"
+			if("OV and UB")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore and Unbirth[pref_warning]","[get_badge_span("type_ov_ub")]")]"
+			if("AV and CV")
+				msg_type = "[SPAN_TOOLTIP("Anal Vore and Cock Vore[pref_warning]","[get_badge_span("type_av_cv")]")]"
+			if("AV and UB")
+				msg_type = "[SPAN_TOOLTIP("Anal Vore and Unbirth[pref_warning]","[get_badge_span("type_av_ub")]")]"
+			if("CV and UB")
+				msg_type = "[SPAN_TOOLTIP("Cock Vore and Unbirth[pref_warning]","[get_badge_span("type_cv_ub")]")]"
+			if("OV, AV and CV")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore, Anal Vore and Cock Vore[pref_warning]","[get_badge_span("type_ov_av_cv")]")]"
+			if("OV, AV and UB")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore, Anal Vore and Unbirth[pref_warning]","[get_badge_span("type_ov_av_ub")]")]"
+			if("OV, CV and UB")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore, Cock Vore and Unbirth[pref_warning]","[get_badge_span("type_ov_cv_ub")]")]"
+			if("AV, CV and UB")
+				msg_type = "[SPAN_TOOLTIP("Anal Vore, Cock Vore and Unbirth[pref_warning]","[get_badge_span("type_av_cv_ub")]")]"
+			if("OV, AV, CV and UB")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore, Anal Vore, Cock Vore and Unbirth[pref_warning]","[get_badge_span("type_ov_av_cv_ub")]")]"
+	var/badge_line = "[msg_gng][msg_lean][msg_vore][msg_type][msg_willing][msg_sexuality][msg_erp]"
 	return badge_line
 //OV edit end

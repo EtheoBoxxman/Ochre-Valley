@@ -770,6 +770,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["badge_sexuality"] >> badge_sexuality
 	S["badge_erp"] >> badge_erp
 	S["badge_lean"] >> badge_lean
+	S["badge_type"] >> badge_type
 	//OV edit end
 
 	S["img_gallery"]	>> img_gallery
@@ -1041,6 +1042,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["badge_sexuality"] , badge_sexuality)
 	WRITE_FILE(S["badge_erp"] , badge_erp)
 	WRITE_FILE(S["badge_lean"] , badge_lean)
+	WRITE_FILE(S["badge_type"] , badge_type)
 	//OV edit end
 
 	WRITE_FILE(S["gear_list"], gear_list)

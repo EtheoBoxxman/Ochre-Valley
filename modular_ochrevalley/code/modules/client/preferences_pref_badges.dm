@@ -30,6 +30,11 @@
 			if(!new_choice)
 				return
 			badge_lean = new_choice
+		if("choose_vore_type")
+			var/new_choice = tgui_input_list(user, "Which methods of vore do you enjoy? OV is Oral Vore, AV is Anal Vore, CV is Cock Vore and UB in Unbirth. Other methods should be detailed in your OOC notes.","Vore Methods",list("Unset","OV","AV","CV","UB","OV and AV","OV and CV","OV and UB","AV and CV","AV and UB","CV and UB","OV, AV and CV","OV, AV and UB","OV, CV and UB","AV, CV and UB","OV, AV, CV and UB"))
+			if(!new_choice)
+				return
+			badge_type = new_choice
 
 /datum/preferences/proc/print_badges_page()
 	var/list/dat = list()
@@ -39,6 +44,7 @@
 	dat += "<b>Scene Partner Pref:</b> <a href='?_src_=prefs;preference=choose_sexuality;task=change_pref_badge'>[badge_sexuality]</a><br>"
 	dat += "<b>Allow non-vore ERP:</b> <a href='?_src_=prefs;preference=choose_erp_pref;task=change_pref_badge'>[badge_erp]</a><br>"
 	dat += "<b>Pred/Prey lean:</b> <a href='?_src_=prefs;preference=choose_vore_lean;task=change_pref_badge'>[badge_lean]</a><br>"
+	dat += "<b>Vore Methods:</b> <a href='?_src_=prefs;preference=choose_vore_type;task=change_pref_badge'>[badge_type]</a><br>"
 	return dat
 
 /datum/preferences/proc/show_pref_badge_ui(mob/user)
