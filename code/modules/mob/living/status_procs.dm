@@ -132,7 +132,7 @@
 
 // OV Edit Start
 /mob/living/proc/IsPetrified()
-	return has_status_effect(STATUS_EFFECT_PETRIFIED)
+	return petrified_status_effect
 // OV Edit End
 
 /mob/living/proc/AmountImmobilized() //How many deciseconds remain in our Immobilized status effect

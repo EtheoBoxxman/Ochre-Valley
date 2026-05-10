@@ -276,7 +276,8 @@
 
 /obj/item/organ/brain/transfer_to_limb(obj/item/bodypart/head/LB, mob/living/carbon/human/C)
 	// OV Edit Start
-	Remove(C, special = C?.IsPetrified(), no_id_transfer = C?.IsPetrified()) //Keep petrified victims attached to their statue body.
+	var/petrified_owner = C?.IsPetrified()
+	Remove(C, special = petrified_owner, no_id_transfer = petrified_owner) //Keep petrified victims attached to their statue body.
 	// OV Edit End
 	forceMove(LB)
 	if(istype(LB))

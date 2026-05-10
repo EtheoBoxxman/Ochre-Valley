@@ -585,7 +585,7 @@
 	if(!valid_check())
 		return TRUE
 	var/mob/living/carbon/human/target = grabbed
-	if(!istype(target) || QDELETED(target) || !target.has_status_effect(STATUS_EFFECT_PETRIFIED))
+	if(!istype(target) || QDELETED(target) || !target.IsPetrified())
 		return FALSE
 	user.changeNext_move(CLICK_CD_GRABBING)
 	if(!user.canUseTopic(container, BE_CLOSE, NO_DEXTERITY))

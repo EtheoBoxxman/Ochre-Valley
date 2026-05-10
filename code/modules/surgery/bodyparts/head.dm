@@ -82,7 +82,7 @@
 /obj/item/bodypart/head/Destroy()
 	// OV Edit Start
 	var/mob/living/original_living = original_owner
-	if(original_living?.has_status_effect(STATUS_EFFECT_PETRIFIED) && original_living.stat != DEAD)
+	if(original_living?.IsPetrified() && original_living.stat != DEAD)
 		original_living.petrification_statue_death("smashed apart")
 	// OV Edit End
 	QDEL_NULL(brainmob) //order is sensitive, see warning in handle_atom_del() below
@@ -113,7 +113,7 @@
 /obj/item/bodypart/head/drop_organs(mob/user, violent_removal)
 	// OV Edit Start
 	var/mob/living/original_living = original_owner
-	if(original_living?.has_status_effect(STATUS_EFFECT_PETRIFIED) && original_living.stat != DEAD)
+	if(original_living?.IsPetrified() && original_living.stat != DEAD)
 		original_living.petrification_statue_death("smashed open", user)
 	// OV Edit End
 	var/turf/T = get_turf(src)
@@ -214,14 +214,15 @@
 	if(dropped) //certain overlays only appear when the limb is being detached from its owner.
 		// OV Edit Start
 		var/mob/living/bodypart_owner = owner || original_owner
+		var/datum/status_effect/petrified/bodypart_owner_petrified = bodypart_owner?.IsPetrified()
 		var/statue_color = petrification_render_color
-		if(!statue_color && bodypart_owner?.IsPetrified())
+		if(!statue_color && bodypart_owner_petrified)
 			petrification_debug("head_get_limb_icon renderer-fallback bypassed: [petrification_debug_bodypart_summary(src)] owner=[petrification_debug_value(bodypart_owner)] requested_color=[bodypart_owner.get_petrification_render_color(TRUE)]")
 		var/list/petrified_color_matrix
 		if(statue_color)
 			petrified_color_matrix = petrification_material_color_matrix(statue_color)
-		if(statue_color || bodypart_owner?.IsPetrified())
-			petrification_debug("head_get_limb_icon dropped start: [petrification_debug_bodypart_summary(src)] owner=[petrification_debug_value(bodypart_owner)] owner_petrified=[bodypart_owner?.IsPetrified()] statue_color=[petrification_debug_value(statue_color)] inherited_overlays=[petrification_debug_len(.)]")
+		if(statue_color || bodypart_owner_petrified)
+			petrification_debug("head_get_limb_icon dropped start: [petrification_debug_bodypart_summary(src)] owner=[petrification_debug_value(bodypart_owner)] owner_petrified=[!!bodypart_owner_petrified] statue_color=[petrification_debug_value(statue_color)] inherited_overlays=[petrification_debug_len(.)]")
 		// OV Edit End
 
 		if(status != BODYPART_ROBOTIC) //having a robotic head hides certain features.

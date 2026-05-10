@@ -26,7 +26,7 @@ GLOBAL_LIST_INIT(ghost_verbs, list(
 	// OV Edit Start
 	if(isliving(mob))
 		var/mob/living/living_mob = mob
-		if(living_mob.stat != DEAD && living_mob.has_status_effect(STATUS_EFFECT_PETRIFIED))
+		if(living_mob.stat != DEAD && living_mob.IsPetrified())
 			living_mob.petrification_surrender()
 			return
 	// OV Edit End
@@ -53,7 +53,7 @@ GLOBAL_LIST_INIT(ghost_verbs, list(
 	// OV Edit Start
 	if(isliving(mob))
 		var/mob/living/living_mob = mob
-		if(living_mob.stat != DEAD && living_mob.has_status_effect(STATUS_EFFECT_PETRIFIED))
+		if(living_mob.stat != DEAD && living_mob.IsPetrified())
 			living_mob.petrification_surrender()
 			return
 	// OV Edit End

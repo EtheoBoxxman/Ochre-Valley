@@ -25,6 +25,7 @@ GLOBAL_VAR_INIT(mobids, 1)
  * Returns QDEL_HINT_HARDDEL (don't change this)
  */
 /mob/Destroy()//This makes sure that mobs with clients/keys are not just deleted from the game.
+	set_hearing_atom_override(null)
 	GLOB.mob_list -= src
 	GLOB.dead_mob_list -= src
 	GLOB.alive_mob_list -= src

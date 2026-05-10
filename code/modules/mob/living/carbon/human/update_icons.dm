@@ -1883,9 +1883,10 @@ generate/load female uniform sprites matching all previously decided variables
 	else
 		. += "not_coloured"
 	// OV Edit Start
-	if(IsPetrified())
+	var/datum/status_effect/petrified/petrified_status_active = IsPetrified()
+	if(petrified_status_active)
 		. += "petrified"
-		. += get_petrification_render_color(TRUE)
+		. += sanitize_hexcolor(petrified_status_active.material_color, 6, TRUE, "#8a8f8d")
 	// OV Edit End
 
 	. += gender
@@ -1942,11 +1943,11 @@ generate/load female uniform sprites matching all previously decided variables
 // OV Edit Start
 /mob/living/carbon/human/update_body_parts(redraw = FALSE, petrified_color_override = null)
 	var/petrified_render_color
-	var/petrified_status_active = IsPetrified()
+	var/datum/status_effect/petrified/petrified_status_active = IsPetrified()
 	if(!isnull(petrified_color_override))
 		petrified_render_color = sanitize_hexcolor(petrified_color_override, 6, TRUE, "#8a8f8d")
 	else if(petrified_status_active)
-		petrified_render_color = get_petrification_render_color(TRUE)
+		petrified_render_color = sanitize_hexcolor(petrified_status_active.material_color, 6, TRUE, "#8a8f8d")
 	if(petrified_render_color)
 		petrification_debug("update_body_parts renderer-tint bypassed: owner=[key_name(src)] requested_render_color=[petrification_debug_value(petrified_render_color)]")
 		petrified_render_color = null

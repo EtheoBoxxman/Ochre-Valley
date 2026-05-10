@@ -264,10 +264,10 @@
 /obj/item/bodypart/head/attackby(obj/item/I, mob/user, params)
 	// OV Edit Start
 	var/mob/living/original_living = original_owner
-	if(!owner && original_living?.has_status_effect(STATUS_EFFECT_PETRIFIED) && original_living.stat != DEAD && I.force && !I.get_sharpness())
+	if(!owner && original_living?.IsPetrified() && original_living.stat != DEAD && I.force && !I.get_sharpness())
 		user.visible_message(span_danger("[user] begins smashing [src] apart with [I]."), span_warning("I begin smashing [src] apart with [I]."))
 		if(do_after(user, 3 SECONDS, target = src))
-			if(!QDELETED(src) && !owner && original_living.has_status_effect(STATUS_EFFECT_PETRIFIED) && original_living.stat != DEAD)
+			if(!QDELETED(src) && !owner && original_living.IsPetrified() && original_living.stat != DEAD)
 				original_living.petrification_statue_death("smashed apart", user)
 				user.visible_message(span_danger("[user] smashes [src] apart!"), span_warning("I smash [src] apart."))
 				qdel(src)
@@ -662,15 +662,16 @@
 
 	. = list()
 	var/mob/living/bodypart_owner = owner || original_owner
+	var/datum/status_effect/petrified/bodypart_owner_petrified = bodypart_owner?.IsPetrified()
 	var/statue_color = petrification_render_color
-	if(!statue_color && bodypart_owner?.IsPetrified())
+	if(!statue_color && bodypart_owner_petrified)
 		petrification_debug("get_limb_icon renderer-fallback bypassed: [petrification_debug_bodypart_summary(src)] owner=[petrification_debug_value(bodypart_owner)] requested_color=[bodypart_owner.get_petrification_render_color(TRUE)]")
 	var/petrified_limb = !!statue_color
 	var/list/petrified_color_matrix
 	if(petrified_limb)
 		petrified_color_matrix = petrification_material_color_matrix(statue_color)
-	if(petrified_limb || bodypart_owner?.IsPetrified())
-		petrification_debug("get_limb_icon start: [petrification_debug_bodypart_summary(src)] dropped=[dropped] hideaux=[hideaux] owner=[petrification_debug_value(bodypart_owner)] owner_petrified=[bodypart_owner?.IsPetrified()] statue_color=[petrification_debug_value(statue_color)] matrix_len=[petrification_debug_len(petrified_color_matrix)]")
+	if(petrified_limb || bodypart_owner_petrified)
+		petrification_debug("get_limb_icon start: [petrification_debug_bodypart_summary(src)] dropped=[dropped] hideaux=[hideaux] owner=[petrification_debug_value(bodypart_owner)] owner_petrified=[!!bodypart_owner_petrified] statue_color=[petrification_debug_value(statue_color)] matrix_len=[petrification_debug_len(petrified_color_matrix)]")
 	var/icon_gender = (body_gender == FEMALE) ? "f" : "m" //gender of the icon, if applicable
 	var/render_as_organic_limb = is_organic_limb() || petrified_limb
 
@@ -823,7 +824,7 @@
 				apply_petrified_overlay_color(overlays, null, petrified_color_matrix)
 				petrification_debug("get_limb_icon feature-overlay after-tint: zone=[body_zone] overlays=[petrification_debug_len(overlays)] [petrification_debug_feature_summary(feature)]")
 			. += overlays
-	if(petrified_limb || bodypart_owner?.IsPetrified())
+	if(petrified_limb || bodypart_owner_petrified)
 		petrification_debug("get_limb_icon end: zone=[body_zone] total_overlays=[petrification_debug_len(.)] limb_color=[petrification_debug_value(limb.color)]")
 // OV Edit End
 

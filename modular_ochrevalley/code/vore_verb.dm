@@ -36,6 +36,7 @@
 	var/petrification_permanent = FALSE
 	var/petrification_sensitive = FALSE
 	var/list/petrification_texts
+	var/tmp/datum/status_effect/petrified/petrified_status_effect
 
 /datum/preferences
 	var/list/petrification_presets
@@ -222,7 +223,7 @@
 /mob/living/proc/get_petrification_render_color(include_hash = TRUE)
 	var/default_color = include_hash ? "#8a8f8d" : "8a8f8d"
 	var/render_color = petrification_color
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(petrified)
 		render_color = petrified.material_color
 	return sanitize_hexcolor(render_color, 6, include_hash, default_color)
@@ -508,7 +509,7 @@
 	playsound(target_turf, 'sound/magic/fleshtostone.ogg', 70, TRUE)
 
 /mob/living/proc/petrification_self_menu()
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(!petrified)
 		return
 	var/list/choices = list()
@@ -806,7 +807,7 @@
 	var/mob/living/carbon/human/target = grab.grabbed
 	if(!istype(target) || QDELETED(target))
 		return FALSE
-	if(!target.has_status_effect(STATUS_EFFECT_PETRIFIED))
+	if(!target.IsPetrified())
 		if(notify)
 			to_chat(src, span_warning("[target] is not petrified."))
 		return FALSE
@@ -827,7 +828,7 @@
 	return TRUE
 
 /mob/living/carbon/human/proc/can_stash_petrified_torso()
-	if(!has_status_effect(STATUS_EFFECT_PETRIFIED))
+	if(!IsPetrified())
 		return FALSE
 	if(!get_bodypart_shallow(BODY_ZONE_CHEST))
 		return FALSE
@@ -839,7 +840,7 @@
 
 /mob/living/get_pushed_pulled_atom()
 	var/mob/living/carbon/human/target = pulling
-	if(!istype(target) || QDELETED(target) || !target.has_status_effect(STATUS_EFFECT_PETRIFIED))
+	if(!istype(target) || QDELETED(target) || !target.IsPetrified())
 		return ..()
 	if(target.pulledby != src)
 		return ..()
@@ -898,7 +899,7 @@
 		if(notify)
 			to_chat(src, span_warning("[target] is already dead."))
 		return FALSE
-	if(target.has_status_effect(STATUS_EFFECT_PETRIFIED))
+	if(target.IsPetrified())
 		if(notify)
 			to_chat(src, span_warning("[target] is already petrified."))
 		return FALSE
@@ -917,7 +918,7 @@
 /mob/living/proc/can_reverse_petrification(mob/living/carbon/human/target, notify = FALSE)
 	if(!target)
 		return FALSE
-	var/datum/status_effect/petrified/petrified = target.has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = target.IsPetrified()
 	if(!petrified)
 		return FALSE
 	if(petrified.petrifier != src)
@@ -955,19 +956,19 @@
 	message_admins("[key_name_admin(src)] reversed [key_name_admin(target)]'s petrification.")
 
 /mob/living/proc/admin_remove_petrification()
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(!petrified)
 		return FALSE
 	petrified.permanent = FALSE
 	remove_status_effect(STATUS_EFFECT_PETRIFIED)
-	return !has_status_effect(STATUS_EFFECT_PETRIFIED)
+	return !IsPetrified()
 
 /mob/living/proc/is_petrified_sensitive()
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	return petrified?.sensitive
 
 /mob/living/proc/petrification_statue_death(cause = "destroyed", mob/living/killer)
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(!petrified || stat == DEAD)
 		return FALSE
 	visible_message(span_danger("[src]'s petrified body is [cause]!"), span_userdanger("My petrified body is [cause]."))
@@ -981,7 +982,7 @@
 	return TRUE
 
 /mob/living/proc/petrification_leave_body()
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(!petrified || petrified.soul_departed)
 		return
 	if(!key)
@@ -996,7 +997,7 @@
 	return ghost
 
 /mob/living/proc/petrification_surrender()
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(!petrified)
 		return
 	if(!key)
@@ -1031,7 +1032,7 @@
 	for(var/mob/living/carbon/human/body as anything in GLOB.mob_list)
 		if(QDELETED(body) || body.stat == DEAD || body.key)
 			continue
-		var/datum/status_effect/petrified/petrified = body.has_status_effect(STATUS_EFFECT_PETRIFIED)
+		var/datum/status_effect/petrified/petrified = body.IsPetrified()
 		if(!petrified)
 			continue
 		if(petrified.surrendered_ckey != rejoining_ckey)
@@ -1049,7 +1050,7 @@
 	var/mob/living/body = ghost.mind.current
 	var/datum/status_effect/petrified/petrified
 	if(istype(body))
-		petrified = body.has_status_effect(STATUS_EFFECT_PETRIFIED)
+		petrified = body.IsPetrified()
 	var/surrendered_petrification = petrified?.surrendered_ckey && petrified.surrendered_ckey == ckey(ghost.ckey)
 	if(!ghost.vore_death && !surrendered_petrification)
 		return FALSE
@@ -1299,7 +1300,7 @@
 	petrification_debug("atom_colour bypassed: target=[target] type=[target.type] source_color=[material_color_with_hash] removed_previous_matrix=[petrification_debug_len(previous_matrix)] target_color=[petrification_debug_value(target.color)] atom_colours=[petrification_debug_len(target.atom_colours)] filters=[petrification_debug_len(target.filters)] tracked_targets=[petrification_debug_len(appearance_state.petrification_atom_colours)]")
 
 /mob/living/carbon/human/proc/get_petrified_view_head()
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(!petrified)
 		return null
 	var/obj/item/bodypart/head/view_head = petrified.petrified_view_head
@@ -1318,15 +1319,18 @@
 		return view_head.loc
 	return view_head
 
-/mob/living/carbon/human/get_hearing_atom()
-	var/obj/item/bodypart/head/view_head = get_petrified_view_head()
-	if(view_head)
-		return view_head
-	if(isdullahan(src))
+/mob/living/carbon/human/refresh_hearing_atom_override()
+	var/atom/movable/hearing_atom
+	var/datum/status_effect/petrified/petrified = IsPetrified()
+	if(petrified)
+		var/obj/item/bodypart/head/view_head = petrified.petrified_view_head
+		if(view_head && !QDELETED(view_head) && view_head.original_owner == src && view_head.owner != src)
+			hearing_atom = view_head
+	if(!hearing_atom && isdullahan(src))
 		var/datum/species/dullahan/dullahan = dna?.species
 		if(dullahan?.headless && dullahan.my_head && !QDELETED(dullahan.my_head))
-			return dullahan.my_head
-	return ..()
+			hearing_atom = dullahan.my_head
+	set_hearing_atom_override(hearing_atom)
 
 /mob/living/carbon/human/get_message_origin()
 	var/obj/item/bodypart/head/view_head = get_petrified_view_head()
@@ -1359,8 +1363,9 @@
 	return ..()
 
 /mob/living/carbon/human/proc/refresh_petrified_head_vision()
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(!petrified)
+		refresh_hearing_atom_override()
 		return FALSE
 	var/obj/item/bodypart/head/view_head = get_petrified_view_head()
 	if(!view_head)
@@ -1368,9 +1373,11 @@
 			var/obj/item/organ/dullahan_vision/vision = getorganslot(ORGAN_SLOT_HUD)
 			if(vision)
 				vision.viewing_head = FALSE
+		refresh_hearing_atom_override()
 		reset_perspective()
 		return FALSE
 	petrified.petrified_view_head = view_head
+	refresh_hearing_atom_override()
 	if(isdullahan(src))
 		var/obj/item/organ/dullahan_vision/vision = getorganslot(ORGAN_SLOT_HUD)
 		if(vision)
@@ -1381,20 +1388,21 @@
 	return TRUE
 
 /mob/living/carbon/human/proc/force_petrified_head_vision(obj/item/bodypart/head/view_head)
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(!petrified || !view_head || QDELETED(view_head) || view_head.original_owner != src)
 		return FALSE
 	petrified.petrified_view_head = view_head
 	return refresh_petrified_head_vision()
 
 /mob/living/carbon/human/proc/clear_petrified_head_vision(obj/item/bodypart/head/view_head)
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(petrified && (!view_head || petrified.petrified_view_head == view_head))
 		petrified.petrified_view_head = null
 	if(isdullahan(src))
 		var/obj/item/organ/dullahan_vision/vision = getorganslot(ORGAN_SLOT_HUD)
 		if(vision)
 			vision.viewing_head = FALSE
+	refresh_hearing_atom_override()
 	reset_perspective()
 
 /datum/status_effect/petrified
@@ -1435,6 +1443,7 @@
 	if(!.)
 		petrification_debug("on_apply aborted by parent: owner=[petrification_debug_value(owner)]")
 		return
+	owner.petrified_status_effect = src
 	petrification_debug("on_apply start: owner=[petrification_debug_value(owner)] type=[owner?.type] material=[material] color=[material_color]")
 	if(ishuman(owner))
 		petrification_debug_human_state("on_apply-before", owner)
@@ -1509,6 +1518,11 @@
 	petrifier = null
 	. = ..()
 	if(former_owner)
+		if(former_owner.petrified_status_effect == src)
+			former_owner.petrified_status_effect = null
+		if(ishuman(former_owner))
+			var/mob/living/carbon/human/former_human = former_owner
+			former_human.refresh_hearing_atom_override()
 		former_owner.show_unpetrified_action_buttons()
 		if(missing_head && former_owner.stat != DEAD)
 			former_owner.visible_message(span_danger("[former_owner]'s restored body collapses without its head."), span_userdanger("The petrification reverses, but my head is gone!"))
@@ -1532,7 +1546,7 @@
 	petrification_debug_human_state("refresh-after", human_owner)
 
 /mob/living/carbon/human/proc/refresh_petrified_visual_state()
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(!petrified)
 		return
 	var/petrified_color_override = sanitize_hexcolor(petrified.material_color, 6, TRUE, PETRIFICATION_DEFAULT_COLOR)
@@ -1569,9 +1583,9 @@
 		doMove(loc)
 
 /datum/status_effect/petrified/proc/deferred_petrified_appearance_refresh()
-	if(!owner || QDELETED(owner) || owner.has_status_effect(STATUS_EFFECT_PETRIFIED) != src)
+	if(!owner || QDELETED(owner) || owner.petrified_status_effect != src)
 		var/qdeleted_state = owner ? QDELETED(owner) : "no-owner"
-		petrification_debug("deferred_refresh aborted: owner=[petrification_debug_value(owner)] qdeleted=[qdeleted_state] current_status=[petrification_debug_value(owner?.has_status_effect(STATUS_EFFECT_PETRIFIED))]")
+		petrification_debug("deferred_refresh aborted: owner=[petrification_debug_value(owner)] qdeleted=[qdeleted_state] current_status=[petrification_debug_value(owner?.petrified_status_effect)]")
 		return
 	petrification_debug("deferred_refresh running: owner=[petrification_debug_value(owner)]")
 	apply_petrified_appearance(FALSE)

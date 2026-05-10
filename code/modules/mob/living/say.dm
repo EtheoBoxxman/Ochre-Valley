@@ -151,7 +151,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 
 	// OV Edit Start
 	var/petrified_speech = FALSE
-	if(has_status_effect(STATUS_EFFECT_PETRIFIED) && !forced)
+	if(IsPetrified() && !forced)
 		petrified_speech = TRUE
 		message = PETRIFIED_SPEECH_MESSAGE
 		original_message = message

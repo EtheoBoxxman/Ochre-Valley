@@ -302,7 +302,7 @@
 
 /obj/belly/proc/handle_digestion_death(mob/living/M, instant = FALSE)
 	// OV Edit Start
-	if(M?.has_status_effect(STATUS_EFFECT_PETRIFIED))
+	if(M?.IsPetrified())
 		instant = TRUE
 	// OV Edit End
 	if(!instant && slow_digestion) // Gradual corpse digestion

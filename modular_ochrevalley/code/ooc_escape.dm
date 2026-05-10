@@ -3,7 +3,7 @@
 	set name = "OOC Escape"
 	set category = "OOC"
 
-	var/datum/status_effect/petrified/petrified = has_status_effect(STATUS_EFFECT_PETRIFIED)
+	var/datum/status_effect/petrified/petrified = IsPetrified()
 	if(isturf(src.loc) && !petrified)	//Doesn't work if you aren't contained in some way, unless petrification is what trapped you.
 		to_chat(src,span_warning("You are already on the ground. OOC Escape can not help you here."))
 		return
