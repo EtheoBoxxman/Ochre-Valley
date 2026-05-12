@@ -289,6 +289,7 @@
 	var/chosen_spell
 	var/solar_blade = /datum/action/cooldown/spell/astrata/scepter
 	var/solar_fist = /datum/action/cooldown/spell/astrata/fist
+	var/solar_blade2 = /datum/action/cooldown/spell/astrata/sword //OV edit
 	var/choosingspell = FALSE
 
 /datum/intent/mace/strike/astrata
@@ -305,15 +306,20 @@
 		var/choice = chosen_spell
 		choosingspell = TRUE
 		if(!chosen_spell)
-			choice = alert(owner, "BLADE or FIST", "ORDER OR ANARCHY", "Blade", "Fist")
+			choice = alert(owner, "BLADE, SCEPTRE or FIST", "ORDER OR ANARCHY", "Sceptre", "Fist", "Blade") //OV EDIT
 			chosen_spell = choice
 		switch(choice)
-			if("Blade")
+			if("Sceptre") //OV EDIT
 				owner.mind?.AddSpell(new solar_blade, owner)
 				owner.mind?.RemoveSpell(src.type)
 			if("Fist")
 				owner.mind?.AddSpell(new solar_fist, owner)
 				owner.mind?.RemoveSpell(src.type)
+			//OV edit
+			if("Blade")
+				owner.mind?.AddSpell(new solar_blade2, owner)
+				owner.mind?.RemoveSpell(src.type)
+			//OV edit end
 			else
 				return FALSE
 
@@ -443,6 +449,86 @@
 	if(linked_spell)
 		linked_spell.conjured_weapon = null
 	qdel(src)
+
+
+//OV edit - Actual sword version
+/datum/action/cooldown/spell/astrata/sword
+	name = "Solar Sword"
+	desc = "Call for a blade to preserve light and order in Psydonia. Its strength is middling, but it glows fiercely and can be used to cauterize wounds."
+
+	button_icon_state = "blade"
+	sound = 'sound/magic/whiteflame.ogg'
+	spell_color = GLOW_COLOR_ASTRATA
+	glow_intensity = GLOW_INTENSITY_MEDIUM
+
+	click_to_activate = TRUE
+	self_cast_possible = TRUE
+
+	primary_resource_type = SPELL_COST_DEVOTION
+	primary_resource_cost = SPELLCOST_MIRACLE
+
+	secondary_resource_type = SPELL_COST_STAMINA
+	secondary_resource_cost = SPELLCOST_CONJURE
+
+	invocations = list("Astrata, grant me your fury!")
+	invocation_type = INVOCATION_SHOUT
+
+	charge_required = TRUE
+	charge_time = 2 SECONDS
+	charge_drain = 1
+	charge_slowdown = CHARGING_SLOWDOWN_HEAVY
+	charge_sound = 'sound/magic/holycharging.ogg'
+	cooldown_time = 90 SECONDS
+
+	ignore_armor_penalty = TRUE
+	associated_stat = null
+	associated_skill = /datum/skill/magic/holy
+	spell_tier = 0
+	spell_impact_intensity = SPELL_IMPACT_NONE
+
+	spell_requirements = SPELL_REQUIRES_NO_ANTIMAGIC | SPELL_REQUIRES_HUMAN | SPELL_REQUIRES_SAME_Z
+
+	var/obj/item/rogueweapon/sword/astrata_sword/actual_sword/conjured_weapon
+
+/datum/action/cooldown/spell/astrata/sword/cast(atom/cast_on)
+	. = ..()
+	var/mob/living/carbon/human/H = owner
+	if(!istype(H))
+		return FALSE
+
+	if(H.get_num_arms() <= 0)
+		to_chat(H, span_warning("I don't have any usable hands!"))
+		return FALSE
+
+	// Destroy previous conjured shield
+	if(conjured_weapon && !QDELETED(conjured_weapon))
+		conjured_weapon.visible_message(span_warning("[conjured_weapon] flickers and fades away!"))
+		qdel(conjured_weapon)
+
+	var/obj/item/rogueweapon/sword/astrata_sword/actual_sword/S = new(H.drop_location())
+	S.linked_spell = src
+	S.caster_ref = WEAKREF(H)
+	S.AddComponent(/datum/component/conjured_item, null, TRUE)
+	H.put_in_hands(S)
+	conjured_weapon = S
+	H.visible_message("[H] conjures a shimmering shield of arcyne energy!")
+	return TRUE
+
+/datum/action/cooldown/spell/astrata/sword/Destroy()
+	if(conjured_weapon && !QDELETED(conjured_weapon))
+		conjured_weapon.visible_message(span_warning("[conjured_weapon] flickers and fades away!"))
+		qdel(conjured_weapon)
+	conjured_weapon = null
+	return ..()
+
+/obj/item/rogueweapon/sword/astrata_sword/actual_sword
+	name = "Solar Sabre"
+	desc = "More a holy tool of ceremony than a weapon of her fury. \
+	It harshly radiates sacred light, rebuking rot and darkness alike; \
+	it is a ruler's blade, knight your soldiers and cleanse their wounds."
+	icon = 'modular_ochrevalley/icons/roguetown/weapons/special/astratablade.dmi'
+//OV edit end
+
 
 ////////////////////////////////////////////
 // T2 - Solar Fist - Summon a flame fist. //
