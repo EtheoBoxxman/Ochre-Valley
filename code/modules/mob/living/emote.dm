@@ -71,6 +71,11 @@
 	var/follower_ident = "[follower.key]/([follower.real_name]) (follower of [patron])"
 	message_admins("[follower_ident] [ADMIN_SM(follower)] [ADMIN_FLW(follower)] [ADMIN_PLAYEREFFECTS(follower)] prays: [span_info(prayer)]")
 	user.log_message("(follower of [patron]) prays: [prayer]", LOG_GAME)
+	// OV Edit Start - Send a special prayer notification sound to staff
+	for(var/client/C in GLOB.admins)
+		if(C.prefs.toggles & SOUND_PRAYERS)
+			SEND_SOUND(C, sound('modular_ochrevalley/sounds/misc/gm_prayer.ogg'))
+	// OV Edit End
 
 	follower.whisper(prayer)
 
