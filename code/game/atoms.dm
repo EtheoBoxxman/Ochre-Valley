@@ -450,7 +450,7 @@
 				var/obj/item/reagent_containers/container = src
 				is_closed = !container.spillable
 			if(is_closed == FALSE && reagents.total_volume) // if the container is open, and there's liquids in there
-				user.visible_message(span_info("[user] takes a whiff of the [src]..."), span_info("I take a whiff of the [src]..."))
+				user.visible_message(span_info("[user] takes a whiff of [src]..."), span_info("I take a whiff of [src]..."))
 				. += span_notice("I smell [src.reagents.generate_scent_message()].")
 				if (HAS_TRAIT(user, TRAIT_LEGENDARY_ALCHEMIST))
 					var/full_reagents = ""
@@ -559,7 +559,7 @@
  */
 /atom/proc/hitby(atom/movable/AM, skipcatch, hitpush, blocked, datum/thrownthing/throwingdatum, damage_flag = "blunt")
 	SEND_SIGNAL(src, COMSIG_ATOM_HITBY, AM, skipcatch, hitpush, blocked, throwingdatum, damage_flag)
-	if(density) //thrown stuff bounces off dense stuff in no grav, unless the thrown stuff ends up inside what it hit(embedding, bola, etc...).
+	if(density && !(pass_flags_self & LETPASSTHROW)) //thrown stuff bounces off dense stuff in no grav, unless the thrown stuff ends up inside what it hit(embedding, bola, etc...).
 		addtimer(CALLBACK(src, PROC_REF(hitby_react), AM), 2)
 
 /**
@@ -606,10 +606,20 @@
 
 ///to add blood from a mob onto something, and transfer their dna info
 /atom/proc/add_mob_blood(mob/living/M)
+	// OV Edit Start
+	if(M?.IsPetrified())
+		return FALSE
+	// OV Edit End
 	var/list/blood_dna = M.get_blood_dna_list()
 	if(!blood_dna)
 		return FALSE
-	return add_blood_DNA(blood_dna)
+	var/source_color = M.get_blood_color() || BLOOD_COLOR_RED
+	if(ismob(src))
+		var/mob/recipient = src
+		recipient.bloody_hands_color = source_color
+	. = add_blood_DNA(blood_dna)
+	var/datum/component/decal/blood/B = GetComponent(/datum/component/decal/blood)
+	B?.set_blood_color(source_color)
 
 ///Called when gravity returns after floating I think
 /atom/proc/handle_fall()
@@ -1066,6 +1076,8 @@
 		if(LOG_ASAY)
 			log_adminsay(log_text)
 		if(LOG_OWNERSHIP)
+			log_game(log_text)
+		if(LOG_CRAFT)
 			log_game(log_text)
 		if(LOG_GAME)
 			log_game(log_text)

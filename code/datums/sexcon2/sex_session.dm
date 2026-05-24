@@ -23,13 +23,15 @@
 	var/just_climaxed = FALSE
 	/// Whether to use knot when fucking (for knotted penis types)
 	var/do_knot_action = FALSE
-	/// The bed (if) we're occupying, update on starting an action
-	var/obj/structure/bed/rogue/bed = null
-	var/target_on_bed = FALSE
 
 	var/static/sex_id = 0
 	var/our_sex_id = 0 //this is so we can have more then 1 sex id open at once
 
+	// Moved here from proc/get_generic_force_adjective to reduce list initialization/destruction
+	var/static/list/low_force_adjectives 		= list("gently", "carefully", "tenderly", "gingerly", "delicately", "lazily")
+	var/static/list/mid_force_adjectives 		= list("firmly", "vigorously", "eagerly", "steadily", "intently")
+	var/static/list/high_force_adjectives 		= list("roughly", "carelessly", "forcefully", "fervently", "fiercely")
+	var/static/list/extreme_force_adjectives 	= list("brutally", "violently", "relentlessly", "savagely", "mercilessly")
 
 /datum/sex_session/New(mob/living/carbon/human/session_user, mob/living/carbon/human/session_target)
 	user = session_user
@@ -37,16 +39,12 @@
 	sex_id++
 	our_sex_id = sex_id
 	assign_to_collective()
-	find_bed()
 
 	RegisterSignal(user, COMSIG_SEX_CLIMAX, PROC_REF(on_climax))
 	RegisterSignal(user, COMSIG_SEX_AROUSAL_CHANGED, PROC_REF(on_arousal_changed), TRUE)
-	RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(on_moved))
-	RegisterSignal(target, COMSIG_MOVABLE_MOVED, PROC_REF(on_moved))
 
 /datum/sex_session/Destroy(force, ...)
-	UnregisterSignal(user, list(COMSIG_SEX_CLIMAX, COMSIG_SEX_AROUSAL_CHANGED, COMSIG_MOVABLE_MOVED))
-	UnregisterSignal(target, COMSIG_MOVABLE_MOVED)
+	UnregisterSignal(user, list(COMSIG_SEX_CLIMAX, COMSIG_SEX_AROUSAL_CHANGED))
 	if(collective)
 		collective.sessions -= src
 		// If this was the last session in the collective, remove the collective
@@ -54,41 +52,9 @@
 			LAZYREMOVE(GLOB.sex_collectives, collective)
 			qdel(collective)
 
-	user = null
-	target = null
-	collective = null
-	bed = null
-	current_action = null
-
 	GLOB.sex_sessions -= src
-	return ..()
+	. = ..()
 
-/datum/sex_session/proc/on_moved()
-	SIGNAL_HANDLER
-	find_bed()
-
-/datum/sex_session/proc/on_bed_qdel()
-	SIGNAL_HANDLER
-	bed = null
-	find_bed()
-
-/// Finds a bed we are having fun on, if any
-/datum/sex_session/proc/find_bed()
-	if(bed)
-		if(target.loc == bed.loc)
-			target_on_bed = TRUE
-		else
-			target_on_bed = FALSE
-		return
-	if(target && !(target.mobility_flags & MOBILITY_STAND) && isturf(target.loc)) // find target's bed
-		bed = locate(/obj/structure/bed/rogue) in target.loc
-		target_on_bed = TRUE
-	if(!bed && !(user.mobility_flags & MOBILITY_STAND) && isturf(user.loc)) // find our bed
-		bed = locate(/obj/structure/bed/rogue) in user.loc
-		target_on_bed = FALSE
-
-	if(!bed)
-		target_on_bed = FALSE
 
 /datum/sex_session/proc/assign_to_collective()
 	// Check if we can merge with an existing collective
@@ -121,22 +87,24 @@
 		return
 	if(!action_type)
 		return
+	//OV Add Start
+	var/datum/sex_action/action = SEX_ACTION(action_type)
+	if(action.masturbation && user.IsPetrified())
+		to_chat(user, span_warning("You cannot do this while petrified."))
+		return
+	//OV Add End
 	if(!can_perform_action(action_type))
 		return
 
-	find_bed()
 	desire_stop = FALSE
 	current_action = action_type
 	inactivity = 0
-	var/datum/sex_action/action = SEX_ACTION(current_action)
 	log_combat(user, target, "Started sex action: [action.name] with [target.name].")
 	INVOKE_ASYNC(src, PROC_REF(sex_action_loop))
 
 /datum/sex_session/proc/try_stop_current_action()
 	if(!current_action)
 		return
-
-	find_bed()
 	desire_stop = TRUE
 
 /datum/sex_session/proc/considered_limp(mob/limper)
@@ -209,23 +177,37 @@
 
 /datum/sex_session/proc/inherent_perform_check(action_type)
 	var/datum/sex_action/action = SEX_ACTION(action_type)
+	// OV Edit Start
+	var/obj/item/bodypart/head/held_petrified_head = user.get_held_petrified_head_for(target)
+	// OV Edit End
 	if(!target)
 		return FALSE
+	//OV Add Start
+	if(action.masturbation && user.IsPetrified())
+		return FALSE
+	//OV Add End
 	if(user.stat != CONSCIOUS)
 		return FALSE
-	if(!user.Adjacent(target) && !action.ranged_action)
-		return FALSE
+	// OV Edit Start: Belly Sex/Petrified Head
+	if(!user.Adjacent(target) && !action.ranged_action && !held_petrified_head)
+		if(!isbelly(user.loc) || user.loc != target.loc)
+			return FALSE
+	// OV Edit End
 	if(action.check_incapacitated && user.incapacitated())
 		return FALSE
 	if(action.check_same_tile)
 		var/same_tile = (get_turf(user) == get_turf(target))
 		var/grab_bypass = (action.aggro_grab_instead_same_tile && user.get_highest_grab_state_on(target) == GRAB_AGGRESSIVE)
-		if(!same_tile && !grab_bypass)
+		// OV Edit Start
+		if(!same_tile && !grab_bypass && !held_petrified_head)
 			return FALSE
+		// OV Edit End
 	if(action.require_grab)
 		var/grabstate = user.get_highest_grab_state_on(target)
-		if(grabstate == null || grabstate < action.required_grab_state)
+		// OV Edit Start
+		if((grabstate == null || grabstate < action.required_grab_state) && !held_petrified_head)
 			return FALSE
+		// OV Edit End
 	return TRUE
 
 /datum/sex_session/proc/perform_sex_action(mob/living/carbon/human/action_target, arousal_amt, pain_amt, giving)
@@ -329,16 +311,17 @@
 			return "<font color='#f05ee1'>PARTIALLY ERECT</font>"
 		if(SEX_MANUAL_AROUSAL_FULL)
 			return "<font color='#d146f5'>FULLY ERECT</font>"
+
 /datum/sex_session/proc/get_generic_force_adjective()
 	switch(force)
 		if(SEX_FORCE_LOW)
-			return pick(list("gently", "carefully", "tenderly", "gingerly", "delicately", "lazily"))
+			return pick(low_force_adjectives)
 		if(SEX_FORCE_MID)
-			return pick(list("firmly", "vigorously", "eagerly", "steadily", "intently"))
+			return pick(mid_force_adjectives)
 		if(SEX_FORCE_HIGH)
-			return pick(list("roughly", "carelessly", "forcefully", "fervently", "fiercely"))
+			return pick(high_force_adjectives)
 		if(SEX_FORCE_EXTREME)
-			return pick(list("brutally", "violently", "relentlessly", "savagely", "mercilessly"))
+			return pick(extreme_force_adjectives)
 
 /datum/sex_session/proc/spanify_force(string)
 	switch(force)

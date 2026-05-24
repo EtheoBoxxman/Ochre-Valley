@@ -63,11 +63,18 @@
 
 	if(observer_privilege)
 		obscure_name = FALSE
+	
+	//OV edit
+	var/pvp_pref = get_pvp_icon()
+	var/pvp_icon
+	if(pvp_pref && client.prefs.directory_pvp)
+		pvp_icon = "[SPAN_TOOLTIP("[client.prefs.directory_pvp]","[get_badge_span("[pvp_pref]")]")]"	
+	//OV edit end
 
 	if(name in unknown_names)
-		. = list(span_info("ø ------------ ø\nThis is <EM>[name]</EM>."))
+		. = list(span_info("ø ------------ ø\n[pvp_icon] This is <EM>[name]</EM>.")) //OV EDIT
 	else if(obscure_name) // && !client?.prefs?.masked_examine) OV Edit - Allows Masked Individuals to still hide face and name but keep exmaine text
-		. = list(span_info("ø ------------ ø\nThis is an unknown <EM>[name]</EM>."))
+		. = list(span_info("ø ------------ ø\n[pvp_icon] This is an unknown <EM>[name]</EM>.")) //OV EDIT
 	else
 		on_examine_face(user)
 		var/used_name = name
@@ -100,11 +107,11 @@
 
 		if ((valid_headshot_link(src, displayed_headshot, TRUE)) && (user.client?.prefs.chatheadshot))
 			if(display_as_wanderer)
-				. = list(span_info("ø ------------ ø\n<img src=[displayed_headshot] width=100 height=100/>\nThis is <EM>[used_name]</EM>, the wandering [race_name]."))
+				. = list(span_info("ø ------------ ø\n[chat_headshot(displayed_headshot)]\nThis is <EM>[used_name]</EM>, the wandering [race_name]."))
 			else if(used_title)
-				. = list(span_info("ø ------------ ø\n<img src=[displayed_headshot] width=100 height=100/>\nThis is <EM>[used_name]</EM>, the [race_name] [used_title]."))
+				. = list(span_info("ø ------------ ø\n[chat_headshot(displayed_headshot)]\nThis is <EM>[used_name]</EM>, the [race_name] [used_title]."))
 			else
-				. = list(span_info("ø ------------ ø\n<img src=[displayed_headshot] width=100 height=100/>\nThis is the <EM>[used_name]</EM>, the [race_name]."))
+				. = list(span_info("ø ------------ ø\n[chat_headshot(displayed_headshot)]\nThis is the <EM>[used_name]</EM>, the [race_name]."))
 		else
 			if(display_as_wanderer)
 				. = list(span_info("ø ------------ ø\nThis is <EM>[used_name]</EM>, the wandering [race_name]."))
@@ -141,7 +148,7 @@
 				if(issunelf(src) || patron?.type == /datum/patron/divine/astrata)
 					astratan_symbol = icon2html('icons/misc/language.dmi', world, "celestial")
 					astratan_tooltip = SPAN_TOOLTIP("One of Astrata's [issunelf(src) ? "chosen" : "followers"]", astratan_symbol)
-		. += span_info("[pronoun] [wording] [origin]. [astratan_tooltip]")	//"He hails from [X / Nowhere]" || "His [word] originates from [X]" || "His [word] is implacable..."
+		. += span_info("[pvp_icon] [pronoun] [wording] [origin]. [astratan_tooltip]")	//OV EDIT //"He hails from [X / Nowhere]" || "His [word] originates from [X]" || "His [word] is implacable..."
 
 		if(HAS_TRAIT(src, TRAIT_WITCH))
 			if(HAS_TRAIT(user, TRAIT_NOBLE) || HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_WITCH))
@@ -167,10 +174,10 @@
 			else
 				. += span_danger("THE HOWL OF A MAD GOD SHAKES YOUR BONES! FLESH SHORN INTO VISCERA SPRAYS THE WALLS! RIP AND TEAR!") // Default 'npc' werewolf examine. Thought it seemed edgy enough.
 // OV Edit End
-		if((HAS_TRAIT(user, TRAIT_ANCIENT_HAG) || HAS_TRAIT(user, TRAIT_FEYTOUCHED)) && HAS_TRAIT(src, TRAIT_FEYTOUCHED))
+		if((HAS_TRAIT(user, TRAIT_ANCIENT_HAG) || HAS_TRAIT(user, TRAIT_FEYTOUCHED) || istype(user, /mob/living/simple_animal/pet/familiar/fae)) && HAS_TRAIT(src, TRAIT_FEYTOUCHED))
 			. += span_nicegreen("Someone touched by, or created by fey. Perhaps a vessel of the past, or a deeply affected puppet.")
 
-		if(HAS_TRAIT(user, TRAIT_FEYTOUCHED) && HAS_TRAIT(src, TRAIT_ANCIENT_HAG))
+		if((HAS_TRAIT(user, TRAIT_FEYTOUCHED) ||  istype(user, /mob/living/simple_animal/pet/familiar/fae)) && HAS_TRAIT(src, TRAIT_ANCIENT_HAG))
 			. += span_nicegreen("A true force of the fey, the mossmother speaks to this one closely.")
 
 		if(SSticker.rulermob == src)
@@ -183,6 +190,33 @@
 				. += span_notice("A fellow noble.")
 			else
 				. += span_notice("A noble!")
+
+		if(HAS_TRAIT(src, TRAIT_RESIDENT))
+			. += span_notice("A chartered resident of Azuria.")
+
+		if(HAS_TRAIT(src, TRAIT_DEBTOR))
+			// Defaulted-loan debtor: a serious civic brand. Authority roles see the full banner.
+			if(ishuman(user))
+				var/mob/living/carbon/human/viewer = user
+				if((viewer.job in GLOB.garrison_positions) || (viewer.job in GLOB.retinue_positions) || (viewer.job in GLOB.courtier_positions) || (viewer.job in GLOB.noble_positions))
+					. += span_userdanger("DEFAULT DEBTOR OF THE CROWN!")
+
+		if(HAS_TRAIT(src, TRAIT_ARREARS))
+			// Poll-tax arrears: a soft mark. Authority roles (garrison, retinue, courtier, noble)
+			// can read it off a subject, but only as a hint - the actual amount owed lives with
+			// the Steward, and enforcement is up to whoever spots it.
+			if(ishuman(user))
+				var/mob/living/carbon/human/viewer = user
+				if((viewer.job in GLOB.garrison_positions) || (viewer.job in GLOB.retinue_positions) || (viewer.job in GLOB.courtier_positions) || (viewer.job in GLOB.noble_positions))
+					. += span_smallred("Destitute..")
+
+		if(src.job in GLOB.church_positions)
+			. += span_notice("A member of the Church of Azuria.")
+		else if(HAS_TRAIT(src, TRAIT_DECLARED_BENEFACTOR))
+			. += span_notice("A benefactor of the Church of Azuria.")
+
+		if(src.job in GLOB.inquisition_positions)
+			. += span_notice("A member of the Holy Otavan Inquisition.")
 
 		if((HAS_TRAIT(user, TRAIT_BLACKOAK) && !(src.dna.species.name == "Elf" || src.dna.species.name == "Dark Elf" || src.dna.species.name == "Half-Elf")))
 			. += span_phobia("An invader...")
@@ -247,16 +281,17 @@
 				. += span_syndradio("[m1] struggling to hide the hangover, and the stench of spirits. We're alike.")
 
 			if(user.has_flaw(/datum/charflaw/addiction/paranoid))
-				var/datum/charflaw/addiction/paranoid/pflaw = user.get_flaw()
+				var/datum/charflaw/addiction/paranoid/pflaw = user.get_flaw(/datum/charflaw/addiction/paranoid)
 				if(ishuman(user))
 					if(has_flaw(/datum/charflaw/addiction/paranoid))
 						. += span_nicegreen("[m1] is the kind who sticks to their own. I understand.")
 						user.sate_addiction(/datum/charflaw/addiction/paranoid)
-					else if(pflaw.check_faction(src))
-						. += span_nicegreen("One of my own.")
-						user.sate_addiction(/datum/charflaw/addiction/paranoid)
-					else
-						user.add_stress(/datum/stressevent/paracrowd)
+					else if(pflaw)
+						if(pflaw.check_faction(src))
+							. += span_nicegreen("One of my own.")
+							user.sate_addiction(/datum/charflaw/addiction/paranoid)
+						else
+							user.add_stress(/datum/stressevent/paracrowd)
 
 			if(has_flaw(/datum/charflaw/addiction/masochist) && user.has_flaw(/datum/charflaw/addiction/sadist))
 				. += span_secradio("[m1] marked by scars inflicted for pleasure. A delectable target for my urges.")
@@ -277,8 +312,10 @@
 				if(charflaws.len)
 					var/list/vice_desc = list()
 					for(var/datum/charflaw/cf in charflaws)
-						vice_desc.Add(cf.voyeur_descriptor)
-					. += span_voyeurvice("[m1][english_list(vice_desc)]...")
+						if(cf.voyeur_descriptor)
+							vice_desc.Add(cf.voyeur_descriptor)
+					if(length(vice_desc))
+						. += span_voyeurvice("[m1] [english_list(vice_desc)]...")
 
 			if(HAS_TRAIT(user, TRAIT_EMPATH) && HAS_TRAIT(src, TRAIT_PERMAMUTE))
 				. += span_notice("[m1] lacks a voice. [m1] is a mute!")
@@ -317,6 +354,10 @@
 				if (THEY_THEM, IT_ITS)
 					. += span_redtext("[m1] repulsive!")
 
+		var/datum/antagonist/vampire/vamp_inspect_vlord = src.mind?.has_antag_datum(/datum/antagonist/vampire/lord)
+		if(vamp_inspect_vlord && (!SEND_SIGNAL(src, COMSIG_DISGUISE_STATUS)))
+			. += span_userdanger("A MONSTER!")
+
 		var/datum/antagonist/vampire/vamp_inspect = src.mind?.has_antag_datum(/datum/antagonist/vampire)
 		if(vamp_inspect && (!SEND_SIGNAL(src, COMSIG_DISGUISE_STATUS)))
 			. += span_redtext("[m3] strange glowying eyes and fangs!")
@@ -343,13 +384,12 @@
 		if(item)
 			. += span_notice("You get the feeling [src]'s most valuable possession is \a [item].")
 		var/mammonsonperson = get_mammons_in_atom(src)
-		var/mammonsinbank = SStreasury.bank_accounts[src]
-		if(isnull(mammonsinbank))
-			mammonsinbank = 0
+		var/mammonsinbank = SStreasury.get_balance(src)
 		var/totalvalue = mammonsonperson + mammonsinbank
-		if(totalvalue)
+		if(totalvalue && HAS_TRAIT(user, TRAIT_GILDED_SIGHT))
 			. += span_notice("They carry [mammonsonperson] mammons, with [mammonsinbank] stored away, totaling [totalvalue].")
-
+		else if(mammonsonperson && mammonsonperson >= 100) // worth a whole mission board!
+			. += span_notice("They carry about [mammonsonperson] mammons with them.")
 	var/obscured = check_obscured_slots()
 	var/skipface = (wear_mask && (wear_mask.flags_inv & HIDEFACE)) || (head && (head.flags_inv & HIDEFACE))
 	if(HAS_TRAIT(user, TRAIT_ROYALSERVANT))
@@ -377,6 +417,7 @@
 	var/is_stupid = FALSE
 	var/is_smart = FALSE
 	var/is_normal = FALSE
+	var/guarded = FALSE
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 
@@ -386,6 +427,10 @@
 			is_stupid = TRUE
 		if(((H?.STAINT - 10) + (H?.STAPER - 10) + H.get_skill_level(/datum/skill/misc/reading)) >= 5)
 			is_normal = TRUE
+
+		if(user != src)
+			if(HAS_TRAIT(src, TRAIT_DECEIVING_MEEKNESS))
+				guarded = TRUE
 
 	if(user != src)
 		var/datum/mind/Umind = user.mind
@@ -400,7 +445,7 @@
 
 	if(wear_shirt && !(SLOT_SHIRT in obscured))
 		var/str = "[m3] [wear_shirt.generate_tooltip(wear_shirt.get_examine_string(user))]. "
-		str += "[wear_shirt.integrity_check(is_smart)]"
+		str += "[wear_shirt.integrity_check(is_smart, guarded)]"
 		if(is_stupid)
 			str = "[m3] some kind of shirt!"
 		. += str
@@ -415,7 +460,7 @@
 				accessory_msg += " with [icon2html(U.attached_accessory, user)] \a [U.attached_accessory]"
 		var/str = "[m3] [wear_pants.generate_tooltip(wear_pants.get_examine_string(user))][accessory_msg]. "
 		if(!wear_armor)
-			str += wear_pants.integrity_check(is_smart)
+			str += wear_pants.integrity_check(is_smart, guarded)
 		if(is_stupid)
 			str = "[m3] a pair of some pants! "
 		. += str
@@ -436,7 +481,7 @@
 	if(wear_armor && !(SLOT_ARMOR in obscured))
 		var/str = "[m3] [wear_armor.generate_tooltip(wear_armor.get_examine_string(user))]. "
 		if(is_smart || is_normal)
-			str += wear_armor.integrity_check(is_smart)
+			str += wear_armor.integrity_check(is_smart, guarded)
 		else if (is_stupid)
 			if(istype(wear_armor, /obj/item/clothing/suit/roguetown/armor))
 				var/obj/item/clothing/suit/roguetown/armor/examined_armor = wear_armor
@@ -467,7 +512,7 @@
 			str = "[m3] [CL.generate_tooltip(CL.get_examine_string(user))] on [m2] shoulders. "
 		else
 			str = "[m3] [cloak.get_examine_string(user)] on [m2] shoulders. "
-		str += cloak.integrity_check(is_smart)
+		str += cloak.integrity_check(is_smart, guarded)
 		if (is_stupid)					//So they can tell the named RG tabards. If they can read them, anyway.
 			if(!istype(cloak, /obj/item/clothing/cloak/tabard/stabard) && user.get_skill_level(/datum/skill/misc/reading) == 0)
 				str = "[m3] some kinda clothy thing on [m2] shoulders!"
@@ -476,27 +521,27 @@
 	//right back
 	if(backr && !(SLOT_BACK_R in obscured))
 		var/str = "[m3] [backr.get_examine_string(user)] on [m2] back. "
-		str += backr.integrity_check(is_smart)
+		str += backr.integrity_check(is_smart, guarded)
 		. += str
 
 	//left back
 	if(backl && !(SLOT_BACK_L in obscured))
 		var/str = "[m3] [backl.get_examine_string(user)] on [m2] back. "
-		str += backl.integrity_check(is_smart)
+		str += backl.integrity_check(is_smart, guarded)
 		. += str
 
 	//Hands
 	for(var/obj/item/I in held_items)
 		if(!(I.item_flags & ABSTRACT))
 			var/str = "[m1] holding [I.get_examine_string(user)] in [m2] [get_held_index_name(get_held_index_of_item(I))]. "
-			str += I.integrity_check(is_smart)
+			str += I.integrity_check(is_smart, guarded)
 			. += str
 
 	var/datum/component/forensics/FR = GetComponent(/datum/component/forensics)
 	//gloves
 	if(gloves && !(SLOT_GLOVES in obscured))
 		var/str = "[m3] [gloves.generate_tooltip(gloves.get_examine_string(user))] on [m2] hands. "
-		str += gloves.integrity_check(is_smart)
+		str += gloves.integrity_check(is_smart, guarded)
 		if(is_stupid)
 			str = "[m3] a pair of gloves of some kind!"
 		. += str
@@ -511,13 +556,13 @@
 	//belt
 	if(belt && !(SLOT_BELT in obscured))
 		var/str = "[m3] [belt.get_examine_string(user)] about [m2] waist. "
-		str += belt.integrity_check(is_smart)
+		str += belt.integrity_check(is_smart, guarded)
 		. += str
 
 	//right belt
 	if(beltr && !(SLOT_BELT_R in obscured))
 		var/str = "[m3] [beltr.get_examine_string(user)] on [m2] belt. "
-		str += beltr.integrity_check(is_smart)
+		str += beltr.integrity_check(is_smart, guarded)
 		. += str
 
 	//left belt
@@ -529,7 +574,7 @@
 	//shoes
 	if(shoes && !(SLOT_SHOES in obscured))
 		var/str = "[m3] [shoes.generate_tooltip(shoes.get_examine_string(user))] on [m2] feet. "
-		str += shoes.integrity_check(is_smart)
+		str += shoes.integrity_check(is_smart, guarded)
 		if(is_stupid)
 			str = "[m3] some shoes on [m2] feet!"
 		. += str
@@ -537,7 +582,7 @@
 	//mask
 	if(wear_mask && !(SLOT_WEAR_MASK in obscured))
 		var/str = "[m3] [wear_mask.generate_tooltip(wear_mask.get_examine_string(user))] on [m2] face. "
-		str += wear_mask.integrity_check(is_smart)
+		str += wear_mask.integrity_check(is_smart, guarded)
 		if(is_stupid)
 			str = "[m3] some kinda thing on [m2] face!"
 		. += str
@@ -550,7 +595,7 @@
 			str = "[m3] [CM.generate_tooltip(CM.get_examine_string(user))] in [m2] mouth. "
 		else
 			"[m3] [mouth.get_examine_string(user)] in [m2] mouth. "
-		str += mouth.integrity_check(is_smart)
+		str += mouth.integrity_check(is_smart, guarded)
 		if(is_stupid)
 			str = "[m3] some kinda thing on [m2] mouth!"
 		. += str
@@ -558,7 +603,7 @@
 	//neck
 	if(wear_neck && !(SLOT_NECK in obscured))
 		var/str = "[m3] [wear_neck.generate_tooltip(wear_neck.get_examine_string(user))] around [m2] neck. "
-		str += wear_neck.integrity_check(is_smart)
+		str += wear_neck.integrity_check(is_smart, guarded)
 		if (is_stupid)
 			str = "[m3] something on [m2] neck!"
 		. += str
@@ -591,7 +636,7 @@
 	//wrists
 	if(wear_wrists && !(SLOT_WRISTS in obscured))
 		var/str = "[m3] [wear_wrists.generate_tooltip(wear_wrists.get_examine_string(user))] on [m2] wrists."
-		str += wear_wrists.integrity_check(is_smart)
+		str += wear_wrists.integrity_check(is_smart, guarded)
 		if (is_stupid)
 			str = "[m3] something on [m2] wrists!"
 		. += str
@@ -603,10 +648,10 @@
 	//caustic edit end
 	
 	//arcyne ward
-	if(istype(skin_armor, /obj/item/clothing/suit/roguetown/armor/regenerating/skin/arcyne_ward))
-		var/obj/item/clothing/suit/roguetown/armor/regenerating/skin/arcyne_ward/ward = skin_armor
+	if(istype(skin_armor, /obj/item/clothing/suit/roguetown/armor/manual/arcyne_ward))
+		var/obj/item/clothing/suit/roguetown/armor/manual/arcyne_ward/ward = skin_armor
 		var/str = "[m3] <font color='[ward.ward_color]'>[ward.generate_tooltip(ward.get_examine_string(user))] shimmering around [user == src ? "me" : p_them()].</font>"
-		str += ward.integrity_check(is_smart)
+		str += ward.integrity_check(is_smart, guarded)
 		if (is_stupid)
 			str = "[m3] some weird shiny thing!"
 		. += str
@@ -800,6 +845,10 @@
 				if(91.01 to INFINITY)
 					msg += "[m1] a shitfaced, slobbering wreck."
 
+			//Deadened
+			if(HAS_TRAIT(user, TRAIT_EMPATH) && HAS_TRAIT(src, TRAIT_DETACHED))
+				msg += "[m1] completely hollow inside, radiating a deep, tragic silence."
+
 			//Stress
 			var/stress = get_stress_amount()
 			if(HAS_TRAIT(user, TRAIT_EMPATH))
@@ -864,20 +913,59 @@
 	if((user != src) && isliving(user))
 		var/mob/living/L = user
 		var/final_str = STASTR
+		var/final_con = STACON
 		if(HAS_TRAIT(src, TRAIT_DECEIVING_MEEKNESS))
 			final_str = L.STASTR - rand(1,2)
+			final_con = L.STACON - rand(1,2)
 		var/strength_diff = final_str - L.STASTR
+		var/con_diff = final_con - L.STACON
+
+		var/str_desc
+		var/str_extreme = FALSE
 		switch(strength_diff)
 			if(5 to INFINITY)
-				. += span_warning("<B>[t_He] look[p_s()] much stronger than I.</B>")
+				str_desc = "much stronger"
+				str_extreme = TRUE
 			if(1 to 5)
-				. += span_warning("[t_He] look[p_s()] stronger than I.")
-			if(0)
-				. += "[t_He] look[p_s()] about as strong as I."
+				str_desc = "stronger"
 			if(-5 to -1)
-				. += span_warning("[t_He] look[p_s()] weaker than I.")
+				str_desc = "weaker"
 			if(-INFINITY to -5)
-				. += span_warning("<B>[t_He] look[p_s()] much weaker than I.</B>")
+				str_desc = "much weaker"
+				str_extreme = TRUE
+
+		var/con_desc
+		var/con_extreme = FALSE
+		switch(con_diff)
+			if(5 to INFINITY)
+				con_desc = "much tougher"
+				con_extreme = TRUE
+			if(1 to 5)
+				con_desc = "tougher"
+			if(-5 to -1)
+				con_desc = "frailer"
+			if(-INFINITY to -5)
+				con_desc = "much frailer"
+				con_extreme = TRUE
+
+		var/is_extreme = str_extreme || con_extreme
+		var/phys_msg
+		if(str_desc && con_desc)
+			var/connector = ((strength_diff > 0) == (con_diff > 0)) ? "and" : "but"
+			phys_msg = "[t_He] look[p_s()] [str_desc] [connector] [con_desc] than me."
+		else if(str_desc)
+			phys_msg = "[t_He] look[p_s()] [str_desc] than me."
+		else if(con_desc)
+			phys_msg = "[t_He] look[p_s()] [con_desc] than me."
+		else
+			phys_msg = "[t_He] look[p_s()] about as strong as I."
+
+		if(is_extreme)
+			. += span_warning("<B>[phys_msg]</B>")
+		else if(str_desc || con_desc)
+			. += span_warning(phys_msg)
+		else
+			. += phys_msg
 
 	if((HAS_TRAIT(user,TRAIT_INTELLECTUAL)))
 		var/mob/living/L = user
@@ -887,13 +975,13 @@
 		var/int_diff = final_int - L.STAINT
 		switch(int_diff)
 			if(5 to INFINITY)
-				. += span_revenwarning("[t_He] look[p_s()] far more intelligent than I.")
+				. += span_revenwarning("[t_He] look[p_s()] far more intelligent than me.")
 			if(2 to 5)
-				. += span_revenminor("[t_He] look[p_s()] smarter than I.")
+				. += span_revenminor("[t_He] look[p_s()] smarter than me.")
 			if(-1 to 1)
 				. += "[t_He] look[p_s()] about as intelligent as I."
 			if(-5 to -2)
-				. += span_revennotice("[t_He] look[p_s()] dumber than I.")
+				. += span_revennotice("[t_He] look[p_s()] dumber than me.")
 			if(-INFINITY to -5)
 				. += span_revennotice("[t_He] look[p_s()] as blunt-minded as a rock.")
 
@@ -966,7 +1054,10 @@
 						if(I.associated_skill)
 							src_skill = I.associated_skill
 					var/skilldiff = user.get_skill_level(user_skill) - get_skill_level(src_skill)
-					. += "<font size = 3><i>[skilldiff_report(skilldiff)] in my wielded skill than they are in theirs.</i></font>"
+					if(!skilldiff)
+						. += "<font size = 3><i>[skilldiff_report(skilldiff)] in our wielded skills.</i></font>"
+					else
+						. += "<font size = 3><i>[skilldiff_report(skilldiff)] in my wielded skill than they are in theirs.</i></font>"
 
 	var/showassess = FALSE
 	if(ishuman(user))
@@ -994,24 +1085,31 @@
 				. += "<span class='info' style='color: #313131ff'>[m1] wearing black lipstick.</span>"
 
 
-	var/list/lines
-	if((get_face_name() != real_name) && !observer_privilege)
-		lines = build_cool_description_unknown(get_mob_descriptors_unknown(obscure_name, user), src)
-	else
-		lines = build_cool_description(get_mob_descriptors(obscure_name, user), src)
+	if(show_descriptors)
+		var/list/lines
+		if((get_face_name() != real_name) && !observer_privilege)
+			lines = build_cool_description_unknown(get_mob_descriptors_unknown(obscure_name, user), src)
+		else
+			lines = build_cool_description(get_mob_descriptors(obscure_name, user), src)
 
-	var/app_str
-	if(!(user.client?.prefs?.full_examine))
-		app_str = "<details><summary>[span_info("Details")]</summary>"
+		var/app_str
+		if(!(user.client?.prefs?.full_examine))
+			app_str = "<details><summary>[span_info("Details")]</summary>"
 
-	for(var/line in lines)
-		app_str += span_info(line)
-		app_str += "<br>"
-	if(!(user.client?.prefs?.full_examine))
-		if(length(lines))
-			app_str += "</details>"
+		for(var/line in lines)
+			app_str += span_info(line)
+			app_str += "<br>"
+		if(!(user.client?.prefs?.full_examine))
+			if(length(lines))
+				app_str += "</details>"
 
-	. += app_str
+		. += app_str
+
+	//OV edit
+	var/pref_badge_line = build_pref_badges()
+	if(pref_badge_line)
+		. += "[pref_badge_line]"
+	//OV edit end
 
 	// Characters with the hunted flaw will freak out if they can't see someone's face.
 	if(!appears_dead)
@@ -1145,10 +1243,6 @@
 				villain_text = span_userdanger("BANDIT!")
 		if(mind.special_role == "Deadite")
 			villain_text = span_userdanger("DEADITE!")
-		if(mind.special_role == "Vampire Lord")
-			var/datum/antagonist/vampire/VD = mind.has_antag_datum(/datum/antagonist/vampire)
-			if(!SEND_SIGNAL(VD.owner, COMSIG_DISGUISE_STATUS))
-				villain_text += span_userdanger("A MONSTER!")
 		if(mind.assigned_role == "Lunatic")
 			villain_text += span_userdanger("LUNATIC!")
 
@@ -1168,3 +1262,138 @@
 			return "[verbose ? "Conjured" : "(C. shaft)"]"
 		else
 			return null
+
+//OV edit
+/mob/living/proc/get_badge_span(badge_icon_state)
+	var/datum/asset/spritesheet/sheet = get_asset_datum(/datum/asset/spritesheet/pref_badges)
+	return sheet.icon_tag(badge_icon_state)
+
+/mob/living/proc/get_pvp_icon()
+	if(!client)
+		return
+	if(!client.prefs)
+		return
+	if(!client.prefs.directory_pvp)
+		return
+	var/pvp_icon
+	switch(client.prefs.directory_pvp)
+		if("No PvP")
+			pvp_icon = "pvp_no"
+		if("Ask First")
+			pvp_icon = "pvp_ask"
+		if("Open to PvP")
+			pvp_icon = "pvp_yes"
+	return pvp_icon
+
+/mob/living/proc/build_pref_badges()
+	if(!client)
+		return
+	if(!client.prefs)
+		return
+	var/pref_warning = " - Please check OOC notes for more details, do not rely on badges alone."
+	var/msg_gng = ""
+	var/msg_vore = ""
+	var/msg_willing = ""
+	var/msg_sexuality = ""
+	var/msg_erp = ""
+	var/msg_lean = ""
+	var/msg_type = ""
+	if(client.prefs.badge_gng == "Yes")
+		msg_gng = "[SPAN_TOOLTIP("Allows Grab and Gulp[pref_warning]","[get_badge_span("grab")]")]"
+	if(client.prefs.badge_vore)
+		switch(client.prefs.badge_vore)
+			if("Endo")
+				msg_vore = "[SPAN_TOOLTIP("Endo Only[pref_warning]","[get_badge_span("vore_endo")]")]"
+			if("Absorption")
+				msg_vore = "[SPAN_TOOLTIP("Absorption Only[pref_warning]","[get_badge_span("vore_absorb")]")]"
+			if("Digestion")
+				msg_vore = "[SPAN_TOOLTIP("Digestion Only[pref_warning]","[get_badge_span("vore_digest")]")]"
+			if("Endo and Absorption")
+				msg_vore = "[SPAN_TOOLTIP("Endo and Absorption[pref_warning]","[get_badge_span("vore_absorb_endo")]")]"
+			if("Endo and Digestion")
+				msg_vore = "[SPAN_TOOLTIP("Endo and Digestion[pref_warning]","[get_badge_span("vore_digest_endo")]")]"
+			if("Absorption and Digestion")
+				msg_vore = "[SPAN_TOOLTIP("Absorption and Digestion[pref_warning]","[get_badge_span("vore_digest_absorb")]")]"
+			if("All")
+				msg_vore = "[SPAN_TOOLTIP("Digestion, Absorption and Endo[pref_warning]","[get_badge_span("vore_digest_absorb_endo")]")]"
+	if(client.prefs.badge_willing)
+		switch(client.prefs.badge_willing)
+			if("Willing")
+				msg_willing = "[SPAN_TOOLTIP("Willing Only[pref_warning]","[get_badge_span("pref_willing")]")]"
+			if("Dubcon")
+				msg_willing = "[SPAN_TOOLTIP("Dubcon Only[pref_warning]","[get_badge_span("pref_dub")]")]"
+			if("Unwilling")
+				msg_willing = "[SPAN_TOOLTIP("Unwilling Only[pref_warning]","[get_badge_span("pref_unwilling")]")]"
+			if("Willing and Dubcon")
+				msg_willing = "[SPAN_TOOLTIP("Willing and Dubcon[pref_warning]","[get_badge_span("pref_dub_willing")]")]"
+			if("Willing and Unwilling")
+				msg_willing = "[SPAN_TOOLTIP("Willing and Unwilling[pref_warning]","[get_badge_span("pref_unwilling_willing")]")]"
+			if("Dubcon and Unwilling")
+				msg_willing = "[SPAN_TOOLTIP("Dubcon and Unwilling[pref_warning]","[get_badge_span("pref_unwilling_dub")]")]"
+			if("All")
+				msg_willing = "[SPAN_TOOLTIP("Willing, Dubcon and Unwilling[pref_warning]","[get_badge_span("pref_unwilling_dub_unwilling")]")]"
+	if(client.prefs.badge_sexuality)
+		switch(client.prefs.badge_sexuality)
+			if("Straight")
+				msg_sexuality = "[SPAN_TOOLTIP("Straight[pref_warning]","[get_badge_span("lgbt_straight")]")]"
+			if("Gay")
+				msg_sexuality = "[SPAN_TOOLTIP("Gay[pref_warning]","[get_badge_span("lgbt_gay")]")]"
+			if("Lesbian")
+				msg_sexuality = "[SPAN_TOOLTIP("Lesbian[pref_warning]","[get_badge_span("lgbt_lesbian")]")]"
+			if("Bisexual")
+				msg_sexuality = "[SPAN_TOOLTIP("Bisexual[pref_warning]","[get_badge_span("lgbt_bi")]")]"
+			if("Pansexual")
+				msg_sexuality = "[SPAN_TOOLTIP("Pansexual[pref_warning]","[get_badge_span("lgbt_pan")]")]"
+			if("Asexual")
+				msg_sexuality = "[SPAN_TOOLTIP("Asexual[pref_warning]","[get_badge_span("lgbt_ace")]")]"
+			if("Demisexual")
+				msg_sexuality = "[SPAN_TOOLTIP("Demisexual[pref_warning]","[get_badge_span("lgbt_demi")]")]"
+	if(client.prefs.badge_erp == "Yes")
+		msg_erp = "[SPAN_TOOLTIP("Interested in ERP outside of vore![pref_warning]","[get_badge_span("erp")]")]"
+	if(client.prefs.badge_lean)
+		switch(client.prefs.badge_lean)
+			if("Pred Only")
+				msg_lean = "[SPAN_TOOLTIP("Pred Only[pref_warning]","[get_badge_span("lean_pred")]")]"
+			if("Pred-leaning")
+				msg_lean = "[SPAN_TOOLTIP("Leaning towards Pred[pref_warning]","[get_badge_span("lean_pred_pref")]")]"
+			if("Switch")
+				msg_lean = "[SPAN_TOOLTIP("Switch[pref_warning]","[get_badge_span("lean_switch")]")]"
+			if("Prey-leaning")
+				msg_lean = "[SPAN_TOOLTIP("Leaning towards Prey[pref_warning]","[get_badge_span("lean_prey_pref")]")]"
+			if("Prey Only")
+				msg_lean = "[SPAN_TOOLTIP("Prey Only[pref_warning]","[get_badge_span("lean_prey")]")]"
+	if(client.prefs.badge_type)
+		switch(client.prefs.badge_type)
+			if("OV")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore[pref_warning]","[get_badge_span("type_ov")]")]"
+			if("AV")
+				msg_type = "[SPAN_TOOLTIP("Anal Vore[pref_warning]","[get_badge_span("type_av")]")]"
+			if("CV")
+				msg_type = "[SPAN_TOOLTIP("Cock Vore[pref_warning]","[get_badge_span("type_cv")]")]"
+			if("UB")
+				msg_type = "[SPAN_TOOLTIP("Unbirth[pref_warning]","[get_badge_span("type_ub")]")]"
+			if("OV and AV")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore and Anal Vore[pref_warning]","[get_badge_span("type_ov_av")]")]"
+			if("OV and CV")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore and Cock Vore[pref_warning]","[get_badge_span("type_ov_cv")]")]"
+			if("OV and UB")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore and Unbirth[pref_warning]","[get_badge_span("type_ov_ub")]")]"
+			if("AV and CV")
+				msg_type = "[SPAN_TOOLTIP("Anal Vore and Cock Vore[pref_warning]","[get_badge_span("type_av_cv")]")]"
+			if("AV and UB")
+				msg_type = "[SPAN_TOOLTIP("Anal Vore and Unbirth[pref_warning]","[get_badge_span("type_av_ub")]")]"
+			if("CV and UB")
+				msg_type = "[SPAN_TOOLTIP("Cock Vore and Unbirth[pref_warning]","[get_badge_span("type_cv_ub")]")]"
+			if("OV, AV and CV")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore, Anal Vore and Cock Vore[pref_warning]","[get_badge_span("type_ov_av_cv")]")]"
+			if("OV, AV and UB")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore, Anal Vore and Unbirth[pref_warning]","[get_badge_span("type_ov_av_ub")]")]"
+			if("OV, CV and UB")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore, Cock Vore and Unbirth[pref_warning]","[get_badge_span("type_ov_cv_ub")]")]"
+			if("AV, CV and UB")
+				msg_type = "[SPAN_TOOLTIP("Anal Vore, Cock Vore and Unbirth[pref_warning]","[get_badge_span("type_av_cv_ub")]")]"
+			if("OV, AV, CV and UB")
+				msg_type = "[SPAN_TOOLTIP("Oral Vore, Anal Vore, Cock Vore and Unbirth[pref_warning]","[get_badge_span("type_ov_av_cv_ub")]")]"
+	var/badge_line = "[msg_gng][msg_lean][msg_vore][msg_type][msg_willing][msg_sexuality][msg_erp]"
+	return badge_line
+//OV edit end

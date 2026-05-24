@@ -25,7 +25,6 @@
 	body_parts_covered = COVERAGE_ALL_BUT_HANDFEET
 	armor = ARMOR_LEATHER
 	blocksound = SOFTHIT
-	blade_dulling = DULLING_BASHCHOP
 	sewrepair = TRUE
 	nodismemsleeves = TRUE
 	sellprice = 20
@@ -61,9 +60,29 @@
 	armor = ARMOR_LEATHER 
 	max_integrity = ARMOR_INT_CHEST_LIGHT_MEDIUM
 
+/obj/item/clothing/suit/roguetown/armor/plate/full/dwarven
+	name = "grudgebearer dwarven plate"
+	desc = "A sturdy set of dwarven plate armor, forged in the old ways. It cannot be worked on without intrinsic dwarven knowledge."
+	icon = 'icons/roguetown/clothing/special/race_armor.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/race_armor.dmi'
+	allowed_race = list(/datum/species/dwarf, /datum/species/dwarf/mountain)
+	icon_state = "dwarfchest"
+	item_state = "dwarfchest"
+	smelt_bar_num = 4
+
+/obj/item/clothing/suit/roguetown/armor/plate/full/dwarven/smith
+	name = "grudgebearer splint apron"
+	desc = "A mixture of plate and maille, worn by dwarven smiths. It cannot be worked on without intrinsic dwarven knowledge."
+	icon_state = "dsmithchest"
+	item_state = "dsmithchest"
+	armor_class = ARMOR_CLASS_MEDIUM
+	body_parts_covered = CHEST|GROIN|VITALS|LEGS
+	max_integrity = ARMOR_INT_CHEST_MEDIUM_STEEL
+	smelt_bar_num = 3
+
 /obj/item/clothing/suit/roguetown/armor/plate/elven_plate
 	name = "woad elven plate"
-	desc = "An assembly of thickly woven trunk, woven by song and tool of the oldest elven druids. It still creaks and weeps with forlorn reminiscence of a bygone era. It looks like only Elves can fit in it."
+	desc = "An assembly of thickly woven trunk, bound together by ancient song and tool of the oldest elven druids. It still creaks and weeps with forlorn reminiscence of a bygone era. It looks like only Elves can fit in it."
 	allowed_race = list(/datum/species/elf/wood, /datum/species/human/halfelf, /datum/species/elf/dark)
 	armor = ARMOR_BLACKOAK
 	body_parts_covered = COVERAGE_ALL_BUT_HANDFEET
@@ -75,9 +94,17 @@
 	smeltresult = /obj/item/rogueore/coal
 	smelt_bar_num = 4
 	blocksound = SOFTHIT
-	armor_class = ARMOR_CLASS_MEDIUM
-	sellprice = 300 //It's elven! This shit is rather rare to get our hands on!!
+	sellprice = 300 //It's elven! This shit is rather rare to get our hands on!! //CC Edit
 
 /obj/item/clothing/suit/roguetown/armor/plate/elven_plate/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/item_equipped_movement_rustle, SFX_WOOD_ARMOR, 10)
+
+/obj/item/clothing/suit/roguetown/armor/plate/elven_plate/light
+	name = "woad elven maille"
+	desc = "An assembly of woven trunk, bound together by ancient song and tool of the oldest elven druids. It still creaks and weeps with forlorn reminiscence of a bygone era. It looks like only Elves can fit in it."
+	icon_state = "welfchestalt"
+	item_state = "welfchestalt"
+	armor_class = ARMOR_CLASS_LIGHT
+	max_integrity = ARMOR_INT_CHEST_LIGHT_MEDIUM //-27 % durability hit
+	body_parts_covered = CHEST | VITALS | LEGS

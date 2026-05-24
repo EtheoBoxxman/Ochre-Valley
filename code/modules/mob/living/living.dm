@@ -522,6 +522,10 @@
 				O.sublimb_grabbed = item_override
 			else
 				O.sublimb_grabbed = used_limb
+			C.update_hud_hand_slot(BP?.held_index)
+			var/datum/hud/hud_used = C.hud_used
+			if(BP && hud_used?.zone_select)
+				hud_used.zone_select.update_limb(BP.body_zone)
 			put_in_hands(O)
 			O.update_hands(src)
 			if(HAS_TRAIT(src, TRAIT_STRONG_GRABBER) || item_override)
@@ -744,10 +748,16 @@
 		death()
 
 /mob/living/incapacitated(ignore_restraints = FALSE, ignore_grab = TRUE, check_immobilized = FALSE, ignore_stasis = FALSE)
-	if(stat || IsUnconscious() || IsStun() || IsParalyzed() || (!ignore_restraints && restrained(ignore_grab)))
+	// OV Edit Start
+	if(stat || IsUnconscious() || IsStun() || IsParalyzed() || IsPetrified() || (!ignore_restraints && restrained(ignore_grab)))
+	// OV Edit End
 		return TRUE
 
 /mob/living/canUseStorage()
+	// OV Edit Start
+	if(IsPetrified())
+		return FALSE
+	// OV Edit End
 	if (get_num_arms() <= 0)
 		return FALSE
 	return TRUE
@@ -794,6 +804,11 @@
 	set hidden = 1
 	if(stat)
 		return
+	// OV Edit Start
+	if(IsPetrified())
+		to_chat(src, span_warning("I can't move."))
+		return
+	// OV Edit End
 	if(pulledby)
 		to_chat(src, span_warning("I'm grabbed!"))
 		return
@@ -806,6 +821,11 @@
 	set hidden = 1
 	if(stat)
 		return
+	// OV Edit Start
+	if(IsPetrified())
+		to_chat(src, span_warning("I can't move."))
+		return
+	// OV Edit End
 	if(pulledby)
 		to_chat(src, span_warning("I'm grabbed!"))
 		return
@@ -825,6 +845,11 @@
 	set hidden = 1
 	if(stat)
 		return
+	// OV Edit Start
+	if(IsPetrified())
+		to_chat(src, span_warning("I can't move."))
+		return
+	// OV Edit End
 	if(pulledby)
 		to_chat(src, span_warning("I'm grabbed!"))
 		return
@@ -949,8 +974,13 @@
 		if(mind)
 			if(admin_revive)
 				mind.remove_antag_datum(/datum/antagonist/zombie)
-			for(var/obj/effect/proc_holder/spell/spell as anything in mind.spell_list)
-				spell.action?.build_all_button_icons()
+			for(var/spell as anything in mind.spell_list)
+				var/obj/effect/proc_holder/spell/newspell = spell
+				var/datum/action/cooldown/spell/oldspell = spell
+				if(istype(newspell))
+					newspell.action?.build_all_button_icons()
+				else if (istype(oldspell))
+					oldspell.build_all_button_icons()
 			// Reapply arcyne momentum if this mind had it before death
 			if(mind.has_arcyne_momentum && !has_status_effect(/datum/status_effect/buff/arcyne_momentum))
 				apply_status_effect(/datum/status_effect/buff/arcyne_momentum)
@@ -1132,11 +1162,14 @@
 				if(!blood_exists)
 					new /obj/effect/decal/cleanable/trail_holder(start)
 
+				var/source_color = get_blood_color() || BLOOD_COLOR_RED
 				for(var/obj/effect/decal/cleanable/trail_holder/TH in start)
 					if((!(newdir in TH.existing_dirs) || trail_type == "trails_1" || trail_type == "trails_2") && TH.existing_dirs.len <= 16) //maximum amount of overlays is 16 (all light & heavy directions filled)
 						TH.existing_dirs += newdir
 						TH.add_overlay(image('icons/effects/blood.dmi', trail_type, dir = newdir))
 						TH.transfer_mob_blood_dna(src)
+						TH.blood_color = source_color
+						TH.color = source_color
 
 /mob/living/carbon/human/makeTrail(turf/T)
 	if((NOBLOOD in dna.species.species_traits) || (INVISBLOOD in dna.species.species_traits) || !bleed_rate || bleedsuppress) //OV EDIT
@@ -1287,6 +1320,25 @@
 	..()
 	update_charging_movespeed()
 
+/// Cancels a spell currently being channeled, covering both the old proc_holder system
+/// (which sets client.charging during mouse-hold) and the new spell_cooldown datum system
+/// (tracked via /mob/channeling_spell set in on_start_charge).
+/// Returns TRUE if a channel was actually interrupted.
+/mob/living/proc/interrupt_spell_channel()
+	. = FALSE
+	if(channeling_spell)
+		channeling_spell.cancel_casting()
+		// before_cast drives non-click charge spells through do_after; cancel_casting alone
+		// sets currently_charging=FALSE but the do_after loop only breaks on user.doing=FALSE
+		// or movement, so we need to explicitly break it.
+		stop_all_doing()
+		. = TRUE
+	if(client?.charging && used_intent?.tranged && !used_intent.tshield)
+		stop_attack()
+		. = TRUE
+	if(.)
+		to_chat(src, span_danger("My spell is disrupted!"))
+
 /mob/proc/resist_grab(moving_resist)
 	return TRUE //returning 0 means we successfully broke free
 
@@ -1425,6 +1477,12 @@
 // The src mob is trying to strip an item from someone
 // Override if a certain type of mob should be behave differently when stripping items (can't, for example)
 /mob/living/stripPanelUnequip(obj/item/what, mob/who, where)
+	//OV Add Start
+	if(IsPetrified())
+		to_chat(src, span_warning("You cannot do this while petrified."))
+		return
+	//OV Add End
+
 	if(!what.canStrip(who))
 		to_chat(src, span_warning("I can't remove \the [what.name], it appears to be stuck!"))
 		return
@@ -1487,6 +1545,12 @@
 // The src mob is trying to place an item on someone
 // Override if a certain mob should be behave differently when placing items (can't, for example)
 /mob/living/stripPanelEquip(obj/item/what, mob/who, where)
+	//OV Add Start
+	if(IsPetrified())
+		to_chat(src, span_warning("You cannot do this while petrified."))
+		return
+	//OV Add End
+
 	what = src.get_active_held_item()
 	if(what && (HAS_TRAIT(what, TRAIT_NODROP)))
 		to_chat(src, span_warning("I can't put \the [what.name] on [who], it's stuck to my hand!"))
@@ -1610,8 +1674,11 @@
 	return TRUE
 
 /mob/living/proc/can_use_guns(obj/item/G)//actually used for more than guns!
+	if(HAS_TRAIT(src, TRAIT_TINYPAWS))
+		to_chat(src, span_warning("I am unable to fire this!"))
+		return FALSE
 	if(G.trigger_guard == TRIGGER_GUARD_NONE)
-		to_chat(src, span_warning("I are unable to fire this!"))
+		to_chat(src, span_warning("I am unable to fire this!"))
 		return FALSE
 	if(G.trigger_guard != TRIGGER_GUARD_ALLOW_ALL && !IsAdvancedToolUser())
 		to_chat(src, span_warning("I try to fire [G], but can't use the trigger!"))
@@ -1717,7 +1784,8 @@
  */
 
 /mob/living/proc/on_fire_stack(seconds_per_tick, datum/status_effect/fire_handler/fire_stacks/fire_handler)
-	adjust_bodytemperature(((fire_handler.stacks * 12)) * 0.5 * seconds_per_tick)
+	var/fire_resist_mult = HAS_TRAIT(src, TRAIT_FIRE_RESIST) ? 0.5 : 1
+	adjust_bodytemperature(((fire_handler.stacks * 12)) * 0.5 * seconds_per_tick * fire_resist_mult)
 
 /**
  * Adjust the amount of fire stacks on a mob
@@ -1830,8 +1898,20 @@
 	var/paralyzed = IsParalyzed()
 	var/stun = IsStun()
 	var/knockdown = IsKnockdown()
+	// OV Edit Start
+	var/petrified = IsPetrified()
+	if(petrified && m_intent != MOVE_INTENT_WALK)
+		m_intent = MOVE_INTENT_WALK
+		if(hud_used?.static_inventory)
+			for(var/atom/movable/screen/mov_intent/move_selector in hud_used.static_inventory)
+				move_selector.update_icon()
+			for(var/atom/movable/screen/rogmove/rogmove_selector in hud_used.static_inventory)
+				rogmove_selector.update_icon()
+	// OV Edit End
 	var/ignore_legs = get_leg_ignore()
-	var/canmove = !IsImmobilized() && !stun && conscious && !paralyzed && !buckled && (!stat_softcrit || !pulledby) && !chokehold && !IsFrozen() && (has_arms || ignore_legs || has_legs)
+	// OV Edit Start
+	var/canmove = !petrified && !IsImmobilized() && !stun && conscious && !paralyzed && !buckled && (!stat_softcrit || !pulledby) && !chokehold && !IsFrozen() && (has_arms || ignore_legs || has_legs)
+	// OV Edit End
 	if(canmove)
 		mobility_flags |= MOBILITY_MOVE
 	else
@@ -1878,17 +1958,23 @@
 	else
 		mobility_flags |= MOBILITY_UI|MOBILITY_PULL
 */
-	if(restrained || incapacitated())
+	// OV Edit Start
+	if(restrained || incapacitated() || petrified)
+	// OV Edit End
 		mobility_flags &= ~MOBILITY_UI
 	else
 		mobility_flags |= MOBILITY_UI
 
-	if(incapacitated())
+	// OV Edit Start
+	if(incapacitated() || petrified)
+	// OV Edit End
 		mobility_flags &= ~MOBILITY_PULL
 	else
 		mobility_flags |= MOBILITY_PULL
 
-	var/canitem = !paralyzed && !stun && conscious && !chokehold && !restrained && has_arms && !surrendering
+	// OV Edit Start
+	var/canitem = !petrified && !paralyzed && !stun && conscious && !chokehold && !restrained && has_arms && !surrendering
+	// OV Edit End
 	if(canitem)
 		mobility_flags |= (MOBILITY_USE | MOBILITY_PICKUP | MOBILITY_STORAGE)
 	else
@@ -2180,6 +2266,12 @@
 					found_ping(get_turf(M), client, "trap")
 			if(istype(O, /obj/structure/flora/roguegrass/maneater/real))
 				found_ping(get_turf(O), client, "trap")
+			if(istype(O, /obj/item/clothing) || istype(O, /obj/item/rogueweapon) || istype(O, /obj/item/gun))	//bows and crossbows are... guns...
+				if(!isturf(O.loc))
+					continue
+				if(get_dist(O, get_turf(src)) > (get_skill_level(/datum/skill/misc/tracking) + 1))	// From 1 to 7.
+					continue
+				found_ping_object(get_turf(O), O, client)
 			//Hearthstone port - Tracking
 		for(var/obj/effect/track/potential_track in orange(7, src)) //Can't use view because they're invisible by default.
 			if(!can_see(src, potential_track, 10))
@@ -2189,7 +2281,97 @@
 			found_ping(get_turf(potential_track), client, "hidden")
 			potential_track.handle_revealing(src)
 		//Hearthstone end.
+		// Hunting Tracks Logic
+		var/obj/effect/hunting_track/closest_track
+		var/min_dist = 8
+		for(var/obj/effect/hunting_track/HT in range(7, src))
+			// Check if we are part of the party that can see this track
+			var/can_see_ht = FALSE
+			for(var/datum/weakref/W in HT.party_refs)
+				if(W.resolve() == src)
+					can_see_ht = TRUE
+					break
+			if(!can_see_ht)
+				continue
+			found_ping(get_turf(HT), client, "paws")
+			var/dist = get_dist(src, HT)
+			if(dist < min_dist)
+				min_dist = dist
+				closest_track = HT
+		if(closest_track)
+			var/dir_text = dir2text(get_dir(src, closest_track))
+			var/dist_text = ""
+			switch(min_dist)
+				if(0 to 1)
+					dist_text = "right beneath your feet"
+				if(2 to 3)
+					dist_text = "very close by"
+				if(4 to 5)
+					dist_text = "a few paces away"
+				else
+					dist_text = "in the distance"
+			to_chat(src, span_notice("You spot a faint trail [dist_text] to the [dir_text]."))
 
+		var/trackskill = get_skill_level(/datum/skill/misc/tracking)
+		var/has_sleuth = HAS_TRAIT(src, TRAIT_SLEUTH)
+
+		if(trackskill >= SKILL_LEVEL_EXPERT || has_sleuth)
+			var/search_range = has_sleuth ? 7 : (trackskill + 1) // Up to 7 (full screen) w/ Legendary
+			var/turf_origin = get_turf(src)
+			var/turf_up_one	= get_step_multiz(turf_origin, UP)
+			var/turf_up_two
+			if(turf_up_one && (trackskill >= SKILL_LEVEL_MASTER || has_sleuth))
+				turf_up_two = get_step_multiz(turf_up_one, UP)
+			var/turf_up_three
+			if(turf_up_two && (trackskill >= SKILL_LEVEL_LEGENDARY || has_sleuth))
+				turf_up_three = get_step_multiz(turf_up_two, UP)	// We physically cannot go higher on dun world, so we don't. This is very niche already.
+
+			var/list/z_highlights
+			if(turf_up_one)
+				z_highlights = list()
+
+			#define ZTAG_ONE 1
+			#define ZTAG_TWO 2
+			#define ZTAG_THREE 3
+
+			if(turf_up_one)
+				for(var/mob/living/L in get_hearers_in_range(search_range, turf_up_one, RECURSIVE_CONTENTS_CLIENT_MOBS))
+					if((L.m_intent == MOVE_INTENT_SNEAK || HAS_TRAIT(src, TRAIT_LIGHT_STEP)) && !has_sleuth)
+						continue
+					var/turf/T = locate(L.x, L.y, src.z) // We'll want to highlight the turf on -our- z-level.
+					var/val = "[ZTAG_ONE]"
+					if(current_mark && current_mark == L)
+						val += "m"	// "1m" appended to icon state later on.
+					z_highlights[T] = val
+			
+			if(turf_up_two)
+				for(var/mob/living/L in get_hearers_in_range(search_range, turf_up_two, RECURSIVE_CONTENTS_CLIENT_MOBS))
+					if((L.m_intent == MOVE_INTENT_SNEAK || HAS_TRAIT(src, TRAIT_LIGHT_STEP)) && !has_sleuth)
+						continue
+					var/turf/T = locate(L.x, L.y, src.z) // We'll want to highlight the turf on -our- z-level.
+					var/val = "[ZTAG_TWO]"
+					if(current_mark && current_mark == L)
+						val += "m"	// "2m" appended to icon state later on.
+					z_highlights[T] = val
+
+			if(turf_up_three)
+				for(var/mob/living/L in get_hearers_in_range(search_range, turf_up_three, RECURSIVE_CONTENTS_CLIENT_MOBS))
+					if((L.m_intent == MOVE_INTENT_SNEAK || HAS_TRAIT(src, TRAIT_LIGHT_STEP)) && !has_sleuth)
+						continue
+					var/turf/T = locate(L.x, L.y, src.z) // We'll want to highlight the turf on -our- z-level.
+					var/val = "[ZTAG_THREE]"
+					if(current_mark && current_mark == L)
+						val += "m"	// "3m" appended to icon state later on.
+					z_highlights[T] = val
+			
+			if(length(z_highlights))
+				for(var/turf/T in z_highlights)
+					if(!T.density)
+						found_ping_someone_above(T, client, z_highlights[T])
+			
+			#undef ZTAG_ONE
+			#undef ZTAG_TWO
+			#undef ZTAG_THREE
 
 /proc/found_ping(atom/A, client/C, state)
 	if(!A || !C || !state)
@@ -2201,6 +2383,37 @@
 		return
 	I.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	flick_overlay(I, list(C), 30)
+
+/proc/found_ping_object(turf/tloc, atom/A, client/C)
+	if(!A || !C || !tloc)
+		return
+	if(!A.icon_state || !A.icon)
+		return
+	var/image/I = image(icon = 'icons/effects/effects.dmi', loc = tloc, icon_state = "found_obj", layer = 18)
+	if(!I)
+		return
+	var/image/IAtom = image(icon = A.icon, loc = A, icon_state = A.icon_state, layer = 18)
+	IAtom.alpha = 155
+	IAtom.add_overlay(I)
+	IAtom.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	IAtom.layer = 18
+	IAtom.plane = 18
+	flick_overlay(IAtom, list(C), 30)
+
+/proc/found_ping_someone_above(turf/tloc, client/C, tag)
+	if(!C || !tloc || !tag)
+		return
+	var/image/I = image(icon = 'icons/effects/effects.dmi', loc = tloc, icon_state = "found_above[tag]", layer = 18)
+	if(!I)
+		return
+	I.alpha = 155
+	I.layer = 19
+	I.plane = 19
+	if(!I)
+		return
+	I.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	flick_overlay(I, list(C), 30)
+
 
 /mob/proc/look_up()
 	return
@@ -2217,15 +2430,15 @@
 
 	var/turf/T = get_turf(src)
 	var/turf/ceiling = get_step_multiz(src, UP)
-	var/water_view = istype(T, /turf/open/water) && istype(ceiling, /turf/open/water)
+	var/water_view = (istype(T, /turf/open/water) && istype(ceiling, /turf/open/water))
 
 	changeNext_move(CLICK_CD_MELEE)
 
-	if(m_intent != MOVE_INTENT_SNEAK)
-		if(water_view)
+	if(water_view)
+		if(m_intent != MOVE_INTENT_SNEAK)
 			visible_message(span_info("[src] peers into the thickness of the water above [src.p_their()] head."))
 		else
-			to_chat(src, span_info("[src] peers into the thickness of the water above [src.p_their()] head.")) //OV Edit - changed his to pronoun define
+			to_chat(src, span_info("[src] peers into the thickness of the water above [src.p_their()] head."))
 	else
 		if(m_intent != MOVE_INTENT_SNEAK)
 			visible_message(span_info("[src] looks up."))

@@ -53,6 +53,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	var/use_skintones = FALSE	// does it use skintones or not? (spoiler alert this is only used by humans)
 	var/exotic_blood = ""	// If my race wants to bleed something other than bog standard blood, change this to reagent id.
 	var/exotic_bloodtype = "" //If my race uses a non standard bloodtype (A+, O-, AB-, etc)
+	var/blood_color = BLOOD_COLOR_RED // Hex color used to tint blood decals this species leaves behind.
 	var/meat = /obj/item/reagent_containers/food/snacks/rogue/meat/steak //What the species drops on gibbing
 	var/skinned_type
 	var/liked_food = NONE
@@ -925,7 +926,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	return FALSE //Unsupported slot
 
 /datum/species/proc/equip_delay_self_check(obj/item/I, mob/living/carbon/human/H, bypass_equip_delay_self)
-	if(!I.equip_delay_self || bypass_equip_delay_self)
+	if(!I.equip_delay_self || bypass_equip_delay_self || isbelly(H.loc)) // OV Edit: Allow equipping in tummies
 		return TRUE
 	if(HAS_TRAIT(H, TRAIT_CHUNKYFINGERS))
 		return do_after(H, 5 MINUTES, target = H)
@@ -1875,6 +1876,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			if(I)
 				I.remove_bintegrity(1)
 				I.take_damage(1, BRUTE, I.d_type)
+			
 			if(user.mind && user.goodluck(4) && user.d_intent == INTENT_DODGE)
 				user.changeNext_def(clamp(user.dodgetime - 1, 0, CLICK_CD_DODGE))
 				user.changeMaxDodge(1)
@@ -1925,7 +1927,9 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		user.update_inv_hands()
 		playsound(get_turf(H), I.get_dismember_sound(), 80, TRUE)
 
-	if(((I.damtype == BRUTE) && I.force && prob(25 + (I.force * 2))))
+	// OV Edit Start
+	if(((I.damtype == BRUTE) && I.force && prob(25 + (I.force * 2)) && !H.IsPetrified()))
+	// OV Edit End
 		if(affecting.status == BODYPART_ORGANIC)
 			I.add_mob_blood(H)	//Make the weapon bloody, not the person.
 			user.update_inv_hands()
@@ -1933,7 +1937,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 				bloody = 1
 				var/turf/location = H.loc
 				var/splatter_dir = get_dir(H, user)
-				new /obj/effect/temp_visual/dir_setting/bloodsplatter(H.loc, splatter_dir)
+				var/obj/effect/temp_visual/dir_setting/bloodsplatter/splatter = new(H.loc, splatter_dir)
+				splatter.set_blood_color(H.get_blood_color())
 				if(istype(location))
 					H.add_splatter_floor(location)
 					H.add_splatter_wall(location, force = I.force)
@@ -2172,10 +2177,12 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		var/datum/status_effect/fire_handler/fire_stacks/pure_stacks = H.has_status_effect(/datum/status_effect/fire_handler/fire_stacks)
 		var/firemodifier = pure_stacks?.stacks / 50
 		if(pure_stacks?.on_fire)
-			burn_damage = 10 + pure_stacks?.stacks * 3 // Minimum of 10 damage if you are on fire. Applies 3 additional per stack.
+			burn_damage = 5 + round(sqrt(pure_stacks?.stacks) * 10) // sqrt curve - diminishing returns at high stacks
 		else
 			firemodifier = min(firemodifier, 0)
 			burn_damage = round(max(log(2-firemodifier,(H.bodytemperature-BODYTEMP_NORMAL))-5,0)) // this can go below 5 at log 2.5
+		if(HAS_TRAIT(H, TRAIT_FIRE_RESIST))
+			burn_damage *= 0.5
 		if (burn_damage)
 			switch(burn_damage)
 				if(0 to 2)
@@ -2225,10 +2232,12 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	if(thermal_protection >= FIRE_IMMUNITY_MAX_TEMP_PROTECT && !no_protection)
 		return
 
+	var/fire_resist_mult = HAS_TRAIT(H, TRAIT_FIRE_RESIST) ? 0.5 : 1
+
 	if(thermal_protection >= FIRE_SUIT_MAX_TEMP_PROTECT && !no_protection)
-		H.adjust_bodytemperature(11)
+		H.adjust_bodytemperature(11 * fire_resist_mult)
 	else
-		H.adjust_bodytemperature(BODYTEMP_HEATING_MAX + (H.fire_stacks * 12))
+		H.adjust_bodytemperature((BODYTEMP_HEATING_MAX + (H.fire_stacks * 12)) * fire_resist_mult)
 
 /datum/species/proc/Canignite_mob(mob/living/carbon/human/H)
 	if(HAS_TRAIT(H, TRAIT_NOFIRE))

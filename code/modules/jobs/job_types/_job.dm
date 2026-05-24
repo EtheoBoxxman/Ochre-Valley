@@ -70,14 +70,11 @@
 	//can be overridden by antag_rep.txt config
 	var/antag_rep = 10
 
-	var/paycheck = PAYCHECK_MINIMAL
-	var/paycheck_department = ACCOUNT_CIV
-
 	var/display_order = JOB_DISPLAY_ORDER_DEFAULT
 
 	//allowed sex/race for picking
 	var/list/allowed_sexes = list(MALE, FEMALE)
-	var/list/allowed_races = RACES_ALL_KINDS
+	var/list/forbidden_races
 	var/list/allowed_patrons
 	var/list/allowed_ages = ALL_AGES_LIST
 
@@ -177,7 +174,29 @@
 	var/is_quest_giver = FALSE
 
 	/// How many quests this job can take at once
-	var/max_active_quests = 3
+	var/max_active_quests = 2
+
+	var/townie_contract_gate_exempt = FALSE
+
+	///
+	var/quest_claim_barred = FALSE
+
+/proc/is_quest_claim_barred(mob/user)
+	if(!user?.mind)
+		return FALSE
+	var/datum/job/J = user.job ? SSjob.GetJob(user.job) : null
+	return J?.quest_claim_barred ? TRUE : FALSE
+
+/proc/is_townie_contract_gate_exempt(mob/user)
+	if(!user?.mind)
+		return FALSE
+	var/datum/job/J = user.job ? SSjob.GetJob(user.job) : null
+	if(J?.townie_contract_gate_exempt)
+		return TRUE
+	var/datum/advclass/AC = user.mind.picked_advclass
+	if(!QDELETED(AC) && AC.townie_contract_gate_exempt)
+		return TRUE
+	return FALSE
 
 
 /datum/job/proc/special_job_check(mob/dead/new_player/player)
@@ -212,7 +231,7 @@
 
 //Only override this proc
 //H is usually a human unless an /equip override transformed it
-/datum/job/proc/after_spawn(mob/living/H, mob/M, latejoin = FALSE)
+/datum/job/proc/after_spawn(mob/living/H, mob/M, latejoin = FALSE, announce = TRUE)//OV Edit
 	SHOULD_CALL_PARENT(TRUE)
 	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_JOB_AFTER_SPAWN, src)
 	//do actions on H but send messages to M as the key may not have been transferred_yet
@@ -270,7 +289,10 @@
 			used_title = f_title
 		if((H.titles_pref == TITLES_N) && n_title) //OV Add: Gender Neutral Revamp
 			used_title = n_title //OV Add: Gender Neutral Revamp
-		scom_announce("[H.real_name] the [used_title] arrives to Azure Peak.")
+		//OV Add: Don't announce roleless players (Mostly for testing stuff), also allow for unannounced entries
+		if(used_title != "NOPE" && announce)
+			scom_announce("[H.real_name] the [used_title] arrives to Azure Peak.")
+		//OV Add End
 
 	if(give_bank_account)
 		if(give_bank_account > TRUE)
@@ -280,7 +302,7 @@
 
 		if(noble_income)
 			SStreasury.noble_incomes[H] = noble_income
-			SStreasury.give_money_account(noble_income, H, "Noble Estate")
+			SStreasury.grant_estate_income(H, noble_income, TRUE)
 
 	if(show_in_credits)
 		SScrediticons.processing += H
@@ -288,7 +310,7 @@
 	if(cmode_music)
 		H.cmode_music = cmode_music
 
-	if (!hidden_job)
+	if (!hidden_job && announce) //OV Edit: Don't add unannounced players to manifest
 		var/mob_name = H.real_name
 		var/mob_rank
 		if (obsfuscated_job)
@@ -364,11 +386,6 @@
 		if((H.dna.species.id != "human") && (H.dna.species.id != "humen"))
 			H.set_species(/datum/species/human)
 			H.apply_pref_name("human", preference_source)
-	if(!visualsOnly)
-		var/datum/bank_account/bank_account = new(H.real_name, src)
-		bank_account.payday(STARTING_PAYCHECKS, TRUE)
-		H.account_id = bank_account.account_id
-
 	//Equip the rest of the gear
 	H.dna.species.before_equip_job(src, H, visualsOnly)
 	if(!outfit_override && visualsOnly && visuals_only_outfit)

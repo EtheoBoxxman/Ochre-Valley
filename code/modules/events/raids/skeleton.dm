@@ -1,8 +1,11 @@
+// OV Add Start: We've disabled this event.
+#error This file has been deliberately disabled by Ochre Valley and must remain unticked!
+// OV Add End
 /datum/round_event_control/worldsiege
 	name = "Skeleton Siege"
 	typepath = /datum/round_event/worldsiege
 	weight = 10
-	max_occurrences = 1
+	max_occurrences = 0 //OV Edit - Not Needed Currently
 	min_players = 4
 	earliest_start = 35 MINUTES
 	tags = list(TAG_HAUNTED, TAG_COMBAT, TAG_RAID)
@@ -30,7 +33,8 @@
 	return TRUE
 
 /datum/round_event/worldsiege/start()
-	SSmapping.add_world_trait(/datum/world_trait/skeleton_siege, rand(4 MINUTES, 8 MINUTES))
+	SSmapping.add_world_trait(/datum/world_trait/skeleton_siege, rand(10 MINUTES, 15 MINUTES)) //These guys literally will fold over to just about anything.
+	//Lasts roughly up to an ingame day or slightly longer on rare occasions, these guys are genuinely abysmal, dust on death and have terrible stats and... moderately okay skills I guess.
 	for(var/mob/dead/observer/O in GLOB.player_list)
 		addtimer(CALLBACK(O, TYPE_PROC_REF(/mob/dead/observer, horde_respawn)), 1)
 	return

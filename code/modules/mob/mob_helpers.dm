@@ -45,8 +45,8 @@
 
 	return zone
 
-///Returns a TRUE / FALSE if the zone is a FACE coverage subzone. Used mainly by accuracy_check & bait.
-/proc/check_face_subzone(zone)
+///Returns a TRUE / FALSE if the zone is a FACE / HEAD coverage subzone. Used mainly by accuracy_check & bait.
+/proc/check_face_subzone(zone, check_head = TRUE)
 	if(!zone)
 		return FALSE
 	switch(zone)
@@ -60,12 +60,69 @@
 			return TRUE
 		if(BODY_ZONE_PRECISE_EARS)
 			return TRUE
-		//--Optional Neck & Skull Additions--
+		if(BODY_ZONE_PRECISE_SKULL)
+			return TRUE
+		if(BODY_ZONE_HEAD)
+			if(check_head)
+				return TRUE
+		//--Optional Neck Addition--
 		//if(BODY_ZONE_PRECISE_NECK)
 		//	return TRUE
-		//if(BODY_ZONE_PRECISE_SKULL)
-		//	return TRUE
 
+	return FALSE
+
+/proc/check_bait_subzone(zone)
+	if(!zone)
+		return FALSE
+	if(check_face_subzone(zone))
+		return BODY_ZONE_HEAD
+	return zone
+		
+/proc/check_bind_subzone(zone_def)
+	if(!zone_def)
+		return FALSE
+	if(check_face_subzone(zone_def))
+		return BIND_HEAD
+	switch(zone_def)
+		if(BODY_ZONE_PRECISE_L_HAND, BODY_ZONE_L_ARM)
+			return BIND_HAND_L
+		if(BODY_ZONE_PRECISE_R_HAND, BODY_ZONE_R_ARM)
+			return BIND_HAND_R
+		if(BODY_ZONE_PRECISE_L_FOOT, BODY_ZONE_L_LEG)
+			return BIND_FOOT_L
+		if(BODY_ZONE_PRECISE_R_FOOT, BODY_ZONE_R_LEG)
+			return BIND_FOOT_R
+		if(BODY_ZONE_PRECISE_GROIN, BODY_ZONE_PRECISE_STOMACH, BODY_ZONE_CHEST)
+			return BIND_TORSO
+		if(BODY_ZONE_PRECISE_NECK)
+			return BIND_NECK
+	return FALSE
+
+/proc/check_bind(bindzone, attzone)
+	if(!bindzone || !attzone)
+		return FALSE
+	switch(bindzone)
+		if(BIND_HEAD)
+			return check_face_subzone(attzone, check_head = FALSE)
+		if(BIND_HAND_L)
+			if(attzone == BODY_ZONE_PRECISE_L_HAND)
+				return TRUE
+		if(BIND_HAND_R)
+			if(attzone == BODY_ZONE_PRECISE_R_HAND)
+				return TRUE
+		if(BIND_FOOT_L)
+			if(attzone == BODY_ZONE_PRECISE_L_FOOT)
+				return TRUE
+		if(BIND_FOOT_R)
+			if(attzone == BODY_ZONE_PRECISE_R_FOOT)
+				return TRUE
+		if(BIND_TORSO)
+			switch(attzone)
+				if(BODY_ZONE_PRECISE_STOMACH, BODY_ZONE_PRECISE_GROIN)
+					return TRUE
+		if(BIND_NECK)
+			if(attzone == BODY_ZONE_PRECISE_NECK)
+				return TRUE
 	return FALSE
 
 /// Returns the targeting zone equivalent of a given bodypart. Kudos to you if you find a use for this.
@@ -1038,6 +1095,63 @@
 ///Can the mob hear
 /mob/proc/can_hear()
 	. = TRUE
+
+//OV Add Start
+/mob
+	var/tmp/atom/movable/hearing_atom_override
+
+///The atom this mob currently hears from.
+/mob/proc/get_hearing_atom()
+	if(hearing_atom_override)
+		if(!QDELETED(hearing_atom_override))
+			return hearing_atom_override
+		set_hearing_atom_override(null)
+	return src
+
+/mob/proc/set_hearing_atom_override(atom/movable/new_hearing_atom)
+	if(new_hearing_atom == src)
+		new_hearing_atom = null
+	if(new_hearing_atom && QDELETED(new_hearing_atom))
+		new_hearing_atom = null
+	if(hearing_atom_override == new_hearing_atom)
+		return
+	hearing_atom_override = new_hearing_atom
+	if(hearing_atom_override)
+		GLOB.remote_hearing_mob_list |= src
+	else
+		GLOB.remote_hearing_mob_list -= src
+
+/mob/proc/refresh_hearing_atom_override()
+	set_hearing_atom_override(null)
+
+/proc/add_remote_hearing_atom_listeners(list/listening, atom/source, hearing_range)
+	if(!listening || !source || !isnum(hearing_range))
+		return
+	var/turf/source_turf = get_turf(source)
+	if(!source_turf)
+		return
+	for(var/mob/listener as anything in GLOB.remote_hearing_mob_list)
+		if(QDELETED(listener))
+			GLOB.remote_hearing_mob_list -= listener
+			continue
+		if(!listener.client)
+			continue
+		var/atom/movable/hearing_atom = listener.hearing_atom_override
+		if(!hearing_atom || hearing_atom == listener)
+			listener.set_hearing_atom_override(null)
+			continue
+		if(QDELETED(hearing_atom))
+			listener.set_hearing_atom_override(null)
+			continue
+		var/turf/hearing_turf = get_turf(hearing_atom)
+		if(!hearing_turf)
+			continue
+		if(get_dist(hearing_turf, source_turf) > hearing_range)
+			continue
+		if(!is_in_zweb(source_turf.z, hearing_turf.z))
+			continue
+		listening |= listener
+//OV Add End
 
 /**
   * Examine text for traits shared by multiple types.

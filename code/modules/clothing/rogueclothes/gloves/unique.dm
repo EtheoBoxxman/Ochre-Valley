@@ -1,3 +1,12 @@
+/obj/item/clothing/gloves/roguetown/plate/dwarven
+	name = "grudgebearer dwarven gauntlets"
+	desc = "Forged to fit the stubbiest of fingers."
+	icon = 'icons/roguetown/clothing/special/race_armor.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/race_armor.dmi'
+	allowed_race = list(/datum/species/dwarf, /datum/species/dwarf/mountain)
+	icon_state = "dwarfhand"
+	item_state = "dwarfhand"
+
 /obj/item/clothing/gloves/roguetown/elven_gloves
 	name = "woad elven gloves"
 	desc = "The insides are lined with soft, living leaves and soil. They wick away moisture easily."
@@ -26,7 +35,6 @@
 	max_integrity = 200
 	resistance_flags = FIRE_PROOF
 	blocksound = SOFTHIT
-	blade_dulling = DULLING_BASHCHOP
 	break_sound = 'sound/foley/cloth_rip.ogg'
 	drop_sound = 'sound/foley/dropsound/cloth_drop.ogg'
 	anvilrepair = null
@@ -121,3 +129,4 @@
 	desc = "Some times call for a more intimate approach."
 	icon_state = "eoraknuckle"
 	max_integrity = 150
+	unarmed_bonus = 10//So they are better how they used to be

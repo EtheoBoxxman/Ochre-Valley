@@ -73,7 +73,7 @@
 		body += " played by <b>[M.client]</b> "
 		body += "\[<A href='?_src_=holder;[HrefToken()];editrights=[(GLOB.admin_datums[M.client.ckey] || GLOB.deadmins[M.client.ckey]) ? "rank" : "add"];key=[M.key]'>[M.client.holder ? M.client.holder.rank : "Player"]</A>\]"
 		if(CONFIG_GET(flag/use_exp_tracking))
-			body += "\[<A href='?_src_=holder;[HrefToken()];getplaytimewindow=[REF(M)]'>" + M.client.get_exp_living() + "</a>\]"
+			body += " \[<A href='?_src_=holder;[HrefToken()];getplaytimewindow=[REF(M)]'>View Playtime</A>\]"
 
 	if(isnewplayer(M))
 		body += " <B>Hasn't Entered Game</B> "
@@ -286,6 +286,9 @@
 		return
 
 	M.fully_heal(admin_revive = TRUE, break_restraints = TRUE)
+	// OV Edit Start
+	M.admin_remove_petrification()
+	// OV Edit End
 	message_admins(span_danger("Admin [key_name_admin(usr)] healed [key_name_admin(M)]!"))
 	log_admin("[key_name(usr)] healed [key_name(M)].")
 
@@ -311,6 +314,9 @@
 		return
 
 	M.revive(full_heal = TRUE, admin_revive = TRUE)
+	// OV Edit Start
+	M.admin_remove_petrification()
+	// OV Edit End
 	message_admins(span_danger("Admin [key_name_admin(usr)] revived [key_name_admin(M)]!"))
 	log_admin("[key_name(usr)] Revived [key_name(M)].")
 

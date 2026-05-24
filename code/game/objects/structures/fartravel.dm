@@ -39,7 +39,9 @@
 		return
 	in_use = FALSE
 	update_icon()
-	var/dat = "[ADMIN_LOOKUPFLW(user)] has despawned [departing_mob == user ? "themselves" : departing_mob], job [departing_mob.job], at [AREACOORD(src)]. Contents despawned along:"
+	// OV Edit Start: Better admin logging
+	var/dat = "[ADMIN_LOOKUPFLW(user)] has despawned [departing_mob == user ? "themselves" : departing_mob], job [departing_mob.job], at [AREACOORD(src)].\n<details><summary>Contents despawned along:</summary>"
+	var/dat_log = "[key_name(user)] has despawned [departing_mob == user ? "themselves" : departing_mob], job [departing_mob.job], at [AREACOORD(src)]. Contents despawned along:"
 	if(departing_mob.mind)
 		mob_job = SSjob.GetJob(departing_mob.mind.assigned_role)
 		if(mob_job)
@@ -49,17 +51,20 @@
 				SSrole_class_handler.adjust_class_amount(target_job, -1)
 	if(!length(departing_mob.contents))
 		dat += " none."
+		dat_log += " none."
 	else
 		var/atom/movable/content = departing_mob.contents[1]
-		dat += " [content.name]"
+		dat += " - [content.name]\n"
+		dat_log += " [content.name]"
 		for(var/i in 2 to length(departing_mob.contents))
 			content = departing_mob.contents[i]
-			dat += ", [content.name]"
+			dat += " - [content.name]\n"
+			dat_log += ", [content.name]"
 			//Caustic Edit - Force-drop all Micros! So they don't get Qdel'd into the abyss!
 			if(istype(content, /obj/item/holder/micro))
 				departing_mob.dropItemToGround(content, TRUE, TRUE)
 			//Caustic Edit End
-		dat += "."
+		dat_log += "."
 	if(departing_mob.mind)
 		departing_mob.mind.unknow_all_people()
 		for(var/datum/mind/MF in get_minds())
@@ -74,15 +79,41 @@
 	GLOB.chosen_names -= departing_mob.real_name
 	LAZYREMOVE(GLOB.actors_list, departing_mob.mobid)
 	LAZYREMOVE(GLOB.roleplay_ads, departing_mob.mobid)
+	// Keep insiders' bank balance forfeits to the Crown's Purse on far-travel (silent OOC).
+	// Day 0 is a grace window so roundstart bailouts don't accidentally hand the Crown a
+	// windfall from a player who never had time to act in role. Loose mammon is tallied
+	// separately for admin review so withdraw-to-pouch patterns leave a paper trail.
+	if(SStreasury)
+		var/recovered = 0
+		var/datum/fund/account = SStreasury.get_account(departing_mob)
+		var/is_keep_insider = (departing_mob.job in KEEP_INSIDER_JOBS)
+		var/post_grace = GLOB.dayspassed >= 1
+		if(account && is_keep_insider && post_grace && account.balance > 0)
+			recovered = account.balance
+			SStreasury.transfer(account, SStreasury.discretionary_fund, recovered, "Crown forfeiture: [departing_mob.real_name] (far-travel)")
+			record_round_statistic(STATS_FORFEITURE_AMOUNT, recovered)
+			record_round_statistic(STATS_FORFEITURE_COUNT, 1)
+		var/loose = 0
+		if(istype(departing_mob, /mob/living))
+			loose = get_mammons_in_atom(departing_mob) || 0
+		if(recovered > 0 || loose > 0 || is_keep_insider)
+			dat += " | Coin at far-travel (day [GLOB.dayspassed]): [recovered]m forfeit from bank, [loose]m loose on person.\n"
+			dat_log += " | Coin at far-travel (day [GLOB.dayspassed]): [recovered]m forfeit from bank, [loose]m loose on person."
+		SStreasury.remove_person(departing_mob)
+	dat += "</details>"
 	message_admins(dat)
-	log_admin(dat)
+	log_admin(dat_log)
+	// OV Edit End
 	if(departing_mob.stat == DEAD)
 		departing_mob.visible_message("<span class='notice'>[user] safely sends [departing_mob] away./span>")
 	else
 		departing_mob.visible_message("<span class='notice'>[departing_mob == user ? "Out of their own volition, " : "Ushered by [user], "][departing_mob] leaves [SSticker.realm_name].</span>")
+	if(departing_mob.job in ANNOUNCE_ON_FAR_TRAVEL_ROLES)
+		var/datum/job/announce_job = SSjob.GetJob(departing_mob.job)
+		var/announce_title = announce_job ? announce_job.get_informed_title(departing_mob) : departing_mob.job
+		scom_announce("[departing_mob.real_name] the [announce_title] has left the vicinity of [SSticker.realm_name].")
 	if(departing_mob.has_embedded_objects())
 		var/list/embeds = departing_mob.get_embedded_objects()
 		for(var/thing in embeds)
 			QDEL_NULL(thing)
 	QDEL_NULL(departing_mob)
-
