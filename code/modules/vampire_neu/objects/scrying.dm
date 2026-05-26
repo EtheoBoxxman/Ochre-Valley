@@ -121,7 +121,7 @@
 
 	if(zMove(DOWN, TRUE))
 		to_chat(src, span_notice("I move down."))
-
+// OV Edit - Probably not needed, but just in case
 /mob/dead/observer/rogue/arcaneeye/Move(NewLoc, direct)
 	if(updatedir)
 		setDir(direct)//only update dir if we actually need it, so overlays won't spin on base sprites that don't have directions of their own
@@ -137,7 +137,7 @@
 	if(step_turf)
 		return forceMove(step_turf)
 	return FALSE
-
+// OV Edit End
 /mob/proc/scry(can_reenter_corpse = 1, force_respawn = FALSE, drawskip)
 	stop_sound_channel(CHANNEL_HEARTBEAT) //Stop heartbeat sounds because You Are A Ghost Now
 	var/mob/dead/observer/rogue/arcaneeye/eye = new(src)	// Transfer safety to observer spawning proc.
