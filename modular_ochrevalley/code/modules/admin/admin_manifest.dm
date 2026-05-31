@@ -25,14 +25,16 @@ GLOBAL_DATUM(admin_manifest, /datum/admin_manifest)
 
 	for(var/client/C in GLOB.clients)
 		var/mob/living/L = C.mob
+		if(isobserver(C.mob))
+			L = C.mob.mind.current
 		if(istype(L))
 			var/key = C.ckey
 			var/name = L.real_name
 			var/job = L.get_role_title()
 			var/list/sorted_actors = get_sorted_actors_list()
-			var/category = sorted_actors[L.mobid]["category"]
+			var/category = sorted_actors[L.mobid] ? sorted_actors[L.mobid]["category"] : "Nobodies"
 			var/photo = C.mob?.get_chardirectory_photo()
-			var/afk = C.is_afk() ? "[round(C.is_afk()/600)] Minutes" : "Active"
+			var/afk = C.is_afk() ? "AFK" : "Active"
 			var/mobState = L.stat
 			manifest_mobs.Add(list(list(
 				"ckey" = key,
