@@ -884,7 +884,18 @@
 	force = 25 // better in one hand. Use it with the shield.
 	max_blade_int = 225
 	smeltresult = /obj/item/ingot/steel
-	sellprice = 50
+
+/obj/item/rogueweapon/halberd/ji
+	name = "ji"
+	desc = "A Lingyuese dagger-axe. A spearhead crowns the shaft, while a crescent side-blade hooks outwards - equally suited to thrusting, hooking a mounted foe out of his saddle, or shearing through a footman's guard."
+	icon_state = "ji"
+
+/obj/item/rogueweapon/halberd/ji/iron
+	name = "iron ji"
+	desc = "A Lingyuese dagger-axe wrought in iron, lacking the steel reinforcement of finer makes. Still serviceable in the hands of a drilled levyman."
+	icon_state = "iji"
+	smeltresult = /obj/item/ingot/iron
+	max_integrity = 200
 
 /obj/item/rogueweapon/halberd/bardiche
 	possible_item_intents = list(/datum/intent/spear/thrust/bad, SPEAR_BASH) //bash is for nonlethal takedowns, only targets limbs
@@ -1038,7 +1049,6 @@
 	walking_stick = TRUE
 	wdefense = 5
 	wbalance = WBALANCE_HEAVY
-	sellprice = 80
 	max_integrity = 250 //So there is actual difference between the two
 
 /obj/item/rogueweapon/eaglebeak/getonmobprop(tag)
@@ -1060,7 +1070,6 @@
 	force_wielded = 25
 	icon_state = "polehammer"
 	smeltresult = /obj/item/ingot/iron
-	sellprice = 40
 	max_integrity = 200
 
 /datum/intent/mace/smash/eaglebeak
@@ -1198,6 +1207,7 @@
 	force = 23
 	force_wielded = 30
 	sellprice = 50
+	no_loot_taint = TRUE
 	max_integrity = 250 //equal to psydonite; putting it at half of this was a neat little experiment but agonizing
 
 

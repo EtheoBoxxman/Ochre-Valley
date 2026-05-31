@@ -107,6 +107,7 @@ GLOBAL_VAR_CONST(observer_move_delay_multiplier, 0.5)
 	if(!istype(src, /mob/dead/observer/rogue/arcaneeye))
 		if(!istype(src, /mob/dead/observer/screye))
 			client?.verbs += GLOB.ghost_verbs
+			client?.update_browserpanel()
 			to_chat(src, span_danger("Click the <b>SKULL</b> on the left of your HUD to respawn."))
 
 	if(icon_state in GLOB.ghost_forms_with_directions_list)
@@ -216,6 +217,7 @@ GLOBAL_VAR_CONST(observer_move_delay_multiplier, 0.5)
 		if(istype(src, /mob/dead/observer/screye))
 			return
 		client?.verbs += GLOB.ghost_verbs
+		client?.update_browserpanel()
 		to_chat(src, span_danger("Click the <b>SKULL</b> on the left of your HUD to respawn."))
 
 /mob/dead/observer/narsie_act()
@@ -482,6 +484,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	remove_client_colour(/datum/client_colour/monochrome)
 	client.change_view(CONFIG_GET(string/default_view))
 	client?.verbs -= GLOB.ghost_verbs
+	client?.update_browserpanel()
 	SStgui.on_transfer(src, mind.current) // Transfer NanoUIs.
 	mind.current.aghosted = null //OV ADD
 	mind.current.key = key
@@ -536,6 +539,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		return
 
 	client.verbs -= GLOB.ghost_verbs
+	client.update_browserpanel()
 	M.key = key
 	return
 

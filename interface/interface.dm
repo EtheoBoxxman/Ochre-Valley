@@ -59,7 +59,7 @@
 /client/verb/mentorhelp()
 	set name = "Mentorhelp"
 	set desc = ""
-	set category = "-Admin-"
+	set category = "ADMIN"
 	if(mob)
 		var/msg = tgui_input_text(src, "Submit your question to the Voices:", "Mentorhelp Input", multiline = TRUE, prevent_enter = TRUE, max_length = MAX_MESSAGE_LEN, encode = FALSE) // OV Edit: Use TGUI input
 		if(msg)

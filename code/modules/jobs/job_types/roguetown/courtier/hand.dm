@@ -6,7 +6,7 @@
 	total_positions = 1
 	spawn_positions = 1
 
-	//forbidden_races = list(RACES_CONSTRUCT RACES_DESPISED)	//No noble constructs. //OV Edit - Allow all for good or ill
+	//forbidden_races = list(RACES_CONSTRUCT RACES_DESPISED RACES_OOZE)	//No noble constructs. //OV Edit - Allow all for good or ill
 	allowed_sexes = list(MALE, FEMALE)
 	outfit = /datum/outfit/job/roguetown/hand
 	advclass_cat_rolls = list(CTAG_HAND = 20)

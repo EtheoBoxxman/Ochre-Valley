@@ -202,6 +202,7 @@
 	reqs = list(/obj/item/clothing/head/roguetown/grenzelhofthat = 1,
 	            /obj/item/clothing/head/roguetown/helmet/sallet = 1)
 	craftdiff = 0
+	skip_quality = TRUE
 
 /datum/crafting_recipe/roguetown/sewing/grenzelhelm/off
 	name = "take hat off steel sallet"
@@ -209,6 +210,7 @@
 	reqs = list(/obj/item/clothing/head/roguetown/helmet/sallet/grenzelhoft = 1)
 	bypass_dupe_test = TRUE
 	craftdiff = 0
+	skip_quality = TRUE
 
 /datum/crafting_recipe/roguetown/sewing/grenzelklapper
 	name = "grenzelhoftian hat with klappvisier"
@@ -217,6 +219,7 @@
 	            /obj/item/clothing/head/roguetown/helmet/bascinet/etruscan = 1)
 	bypass_dupe_test = TRUE
 	craftdiff = 0
+	skip_quality = TRUE
 
 /datum/crafting_recipe/roguetown/sewing/grenzelklapper/off
 	name = "take hat off etruscan bascinet"
@@ -224,6 +227,7 @@
 	reqs = list(/obj/item/clothing/head/roguetown/helmet/bascinet/etruscan/grenzelhoft = 1)
 	bypass_dupe_test = TRUE
 	craftdiff = 0
+	skip_quality = TRUE
 
 /datum/crafting_recipe/roguetown/sewing/grenzelblack
 	name = "grenzelhoftian hat with blacksteel armet"
@@ -232,6 +236,7 @@
 	            /obj/item/clothing/head/roguetown/helmet/blacksteel/modern = 1)
 	bypass_dupe_test = TRUE
 	craftdiff = 0
+	skip_quality = TRUE
 
 ///////// CRAFTING DATUMS FOR PLUME HATS, TRIUMPHED /////////
 
@@ -241,6 +246,7 @@
 	reqs = list(/obj/item/clothing/head/roguetown/grenzelhofthat/triumph = 1,
 	            /obj/item/clothing/head/roguetown/helmet/sallet = 1)
 	craftdiff = 0
+	skip_quality = TRUE
 
 /datum/crafting_recipe/roguetown/sewing/grenzelhelm/triumph/off
 	name = "take beret off steel sallet"
@@ -248,6 +254,7 @@
 	reqs = list(/obj/item/clothing/head/roguetown/helmet/sallet/grenzelhoft/triumph = 1)
 	bypass_dupe_test = TRUE
 	craftdiff = 0
+	skip_quality = TRUE
 
 /datum/crafting_recipe/roguetown/sewing/grenzelklapper/triumph
 	name = "grenzelhoftian beret with klappvisier"
@@ -256,6 +263,7 @@
 	            /obj/item/clothing/head/roguetown/helmet/bascinet/etruscan = 1)
 	bypass_dupe_test = TRUE
 	craftdiff = 0
+	skip_quality = TRUE
 
 /datum/crafting_recipe/roguetown/sewing/grenzelklapper/triumph/off
 	name = "take beret off etruscan bascinet"
@@ -263,6 +271,7 @@
 	reqs = list(/obj/item/clothing/head/roguetown/helmet/bascinet/etruscan/grenzelhoft/triumph = 1)
 	bypass_dupe_test = TRUE
 	craftdiff = 0
+	skip_quality = TRUE
 
 /datum/crafting_recipe/roguetown/sewing/grenzelblack/triumph
 	name = "grenzelhoftian beret with blacksteel armet"
@@ -271,4 +280,5 @@
 	            /obj/item/clothing/head/roguetown/helmet/blacksteel/modern = 1)
 	bypass_dupe_test = TRUE
 	craftdiff = 0
+	skip_quality = TRUE
 
