@@ -99,8 +99,6 @@
 		/datum/customizer/bodypart_feature/hair/head/humanoid,
 		/datum/customizer/bodypart_feature/hair/facial/humanoid,
 		/datum/customizer/bodypart_feature/crest,
-		/datum/customizer/bodypart_feature/hair/head/humanoid,
-		/datum/customizer/bodypart_feature/hair/facial/humanoid,
 		/datum/customizer/bodypart_feature/accessory,
 		/datum/customizer/bodypart_feature/face_detail,
 		/datum/customizer/bodypart_feature/underwear,
@@ -180,13 +178,7 @@
 
 /datum/species/construct/metal/check_roundstart_eligible()
 	return TRUE
-
-//CC Add start
-/datum/species/construct/on_species_gain(mob/living/carbon/foreign, datum/species/old_species)
-	..()
-	foreign.AddComponent(/datum/component/abberant_eater, list(/obj/item/rogueore/coal), TRUE)
-//CC Add end
-
+	
 /datum/species/construct/metal/get_skin_list()
 	return list(
 		"BRASS" = "dfbd6c",
