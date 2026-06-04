@@ -11,7 +11,7 @@ GLOBAL_LIST_EMPTY(lord_titles)
 	total_positions = 1
 	spawn_positions = 1
 	selection_color = JCOLOR_NOBLE
-	forbidden_races = list(RACES_CONSTRUCT RACES_DESPISED RACES_OOZE)
+	//forbidden_races = list(RACES_CONSTRUCT RACES_DESPISED RACES_OOZE) //OV Edit - Allow all for good or ill
 	allowed_sexes = list(MALE, FEMALE)
 	advclass_cat_rolls = list(CTAG_LORD = 20)
 
