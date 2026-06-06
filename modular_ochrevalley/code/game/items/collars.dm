@@ -22,6 +22,8 @@
 /obj/item/clothing/neck/roguetown/leather/collar/bell/cow
 	name = "hardened leather cowbell collar"
 	desc = "A tough band of leather with a simple cowbell affixed."
+	icon = 'modular_ochrevalley/icons/roguetown/clothing/neck.dmi'
+	mob_overlay_icon = 'modular_ochrevalley/icons/roguetown/clothing/onmob/neck.dmi'
 	icon_state = "cowbell_collar"
 
 
@@ -49,6 +51,8 @@
 /obj/item/clothing/neck/roguetown/gorget/collar/bell/cow
 	name = "iron cowbell collar"
 	desc = "A durable collar fortified with iron. Comes with a simple blacksmithed cowbell."
+	icon = 'modular_ochrevalley/icons/roguetown/clothing/neck.dmi'
+	mob_overlay_icon = 'modular_ochrevalley/icons/roguetown/clothing/onmob/neck.dmi'
 	icon_state = "cowbell_collar"
 
 
@@ -75,6 +79,8 @@
 /obj/item/clothing/neck/roguetown/gorget/bronze/collar/bell/cow
 	name = "bronze cowbell collar"
 	desc = "An interlinked collar of bronze plates, shielding the throat from terrible wounds since the dawn of tyme. This one comes with an well-worn cowbell."
+	icon = 'modular_ochrevalley/icons/roguetown/clothing/neck.dmi'
+	mob_overlay_icon = 'modular_ochrevalley/icons/roguetown/clothing/onmob/neck.dmi'
 	icon_state = "cowbell_collar"
 
 
@@ -102,6 +108,8 @@
 /obj/item/clothing/neck/roguetown/gorget/steel/collar/bell/cow
 	name = "steel cowbell collar"
 	desc = "A sturdy steel collar designed to protect the neck. Comes with a well-crafted cowbell."
+	icon = 'modular_ochrevalley/icons/roguetown/clothing/neck.dmi'
+	mob_overlay_icon = 'modular_ochrevalley/icons/roguetown/clothing/onmob/neck.dmi'
 	icon_state = "cowbell_collar"
 
 

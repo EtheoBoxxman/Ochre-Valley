@@ -141,55 +141,55 @@
 				)
 /datum/supply_pack/rogue/kink_toy/collar/iron
 	name = "Iron Armored Collar"
-	cost = 40
+	cost = 25
 	contains = list(
 					/obj/item/clothing/neck/roguetown/gorget/collar
 				)
 /datum/supply_pack/rogue/kink_toy/collar/iron_bell
 	name = "Iron Armored Bell Collar"
-	cost = 40
+	cost = 25
 	contains = list(
 					/obj/item/clothing/neck/roguetown/gorget/collar/bell
 				)
 /datum/supply_pack/rogue/kink_toy/collar/iron_cowbell
 	name = "Iron Armored Cowbell Collar"
-	cost = 40
+	cost = 25
 	contains = list(
 					/obj/item/clothing/neck/roguetown/gorget/collar/bell/cow
 				)
 /datum/supply_pack/rogue/kink_toy/collar/bronze
 	name = "Bronze Armored Collar"
-	cost = 50
+	cost = 40
 	contains = list(
 					/obj/item/clothing/neck/roguetown/gorget/bronze/collar
 				)
 /datum/supply_pack/rogue/kink_toy/collar/bronze_bell
 	name = "Bronze Armored Bell Collar"
-	cost = 50
+	cost = 40
 	contains = list(
 					/obj/item/clothing/neck/roguetown/gorget/bronze/collar/bell
 				)
 /datum/supply_pack/rogue/kink_toy/collar/bronze_cowbell
 	name = "Bronze Armored Cowbell Collar"
-	cost = 50
+	cost = 40
 	contains = list(
 					/obj/item/clothing/neck/roguetown/gorget/bronze/collar/bell/cow
 				)
 /datum/supply_pack/rogue/kink_toy/collar/steel
 	name = "Steel Armored Collar"
-	cost = 60
+	cost = 50
 	contains = list(
 					/obj/item/clothing/neck/roguetown/gorget/steel/collar
 				)
 /datum/supply_pack/rogue/kink_toy/collar/steel_bell
 	name = "Steel Armored Bell Collar"
-	cost = 60
+	cost = 50
 	contains = list(
 					/obj/item/clothing/neck/roguetown/gorget/steel/collar/bell
 				)
 /datum/supply_pack/rogue/kink_toy/collar/steel_cowbell
 	name = "Steel Armored Cowbell Collar"
-	cost = 60
+	cost = 50
 	contains = list(
 					/obj/item/clothing/neck/roguetown/gorget/steel/collar/bell/cow
 				)
