@@ -13,10 +13,10 @@
 		return
 	if(user.stat == DEAD)
 		return
-	last_check = world.time
-	if(user.maxnutrition < 2000)
-		user.maxnutrition += user.maxnutrition + 10
+	last_check = world.time //Calling a CC variable
+	if(user.maxnutrition < 7000) //This is the Cap that prevents it from scaling beyond a value: 6k-8k nutrition cap suggested by Ryumi
+		user.maxnutrition += user.maxnutrition + 10 //Also calling a CC variable
 	if(user.maxnutrition * 0.8 > user.nutrition)
-		user.add_stress(/datum/stressevent/glutton)
+		user.add_stress(/datum/stressevent/glutton) //Calling a CC stressevent
 	else
 		user.remove_stress(/datum/stressevent/glutton)
