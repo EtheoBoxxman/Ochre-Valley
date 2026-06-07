@@ -1362,7 +1362,7 @@
 
 /mob/living/carbon/human/verb/emote_swear()
 	set name = "Swear"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("swear", intentional = TRUE)
 //Caustic Edit End
@@ -2002,7 +2002,7 @@
 
 /mob/living/carbon/human/verb/emote_stomach_growl()
 	set name = "Stomach Growl"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("stomach_growl", intentional = TRUE)
 //OV edit end
