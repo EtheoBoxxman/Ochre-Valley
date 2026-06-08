@@ -92,6 +92,15 @@ export const AdminManifestList = (props: {
         >
         State
         </SortButton>
+        <SortButton
+          ourId="antag"
+          sortId={sortId}
+          sortOrder={sortOrder}
+          onSortId={setSortId}
+          onSortOrder={setSortOrder}
+        >
+        Antag Status
+        </SortButton>
         <Table.Cell collapsing textAlign="center">
           View Player Panel
         </Table.Cell>
@@ -145,6 +154,9 @@ export const AdminManifestList = (props: {
                 </Table.Cell>
                 <Table.Cell verticalAlign="middle">
                   {STATE_DICT[player.state]}
+                </Table.Cell>
+                <Table.Cell verticalAlign="middle">
+                  {player.antag}
                 </Table.Cell>
                 <Table.Cell verticalAlign="middle" collapsing textAlign="center">
                   <Button

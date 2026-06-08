@@ -10,4 +10,5 @@ export type playerEntry = {
   photo: string | null;
   afk: string;
   state: number;
+  antag: string;
 }

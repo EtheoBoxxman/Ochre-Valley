@@ -33,9 +33,10 @@ GLOBAL_DATUM(admin_manifest, /datum/admin_manifest)
 			var/job = L.get_role_title()
 			var/list/sorted_actors = get_sorted_actors_list()
 			var/category = sorted_actors[L.mobid] ? sorted_actors[L.mobid]["category"] : "Nobodies"
-			var/photo = C.mob?.get_chardirectory_photo()
+			var/photo = L.get_chardirectory_photo()
 			var/afk = C.is_afk() ? "AFK" : "Active"
 			var/mobState = L.stat
+			var/antag = L.mind?.special_role ? L.mind.special_role : "None"
 			manifest_mobs.Add(list(list(
 				"ckey" = key,
 				"name" = name,
@@ -44,6 +45,7 @@ GLOBAL_DATUM(admin_manifest, /datum/admin_manifest)
 				"photo" = photo,
 				"afk" = afk,
 				"state" = mobState,
+				"antag" = antag,
 			)))
 	data["directory"] = manifest_mobs
 	return data
