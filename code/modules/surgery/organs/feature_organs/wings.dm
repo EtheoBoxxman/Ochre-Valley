@@ -94,6 +94,10 @@
 
 /obj/effect/proc_holder/spell/self/harpy_flight/cast(mob/living/carbon/human/user)
 	var/harpy_AC = user.highest_ac_worn()
+
+	if(HAS_TRAIT(user, TRAIT_NATURAL_ARMOR))
+		to_chat(user, span_bloody("MY NATURAL ARMOR IS TOO DENSE, MY WINGS ARE USELESS!!"))
+		return
 	if(harpy_AC != ARMOR_CLASS_NONE)
 		to_chat(user, span_bloody("THE ARMOR WEIGHS ME DOWN!!")) // LIGHT ON YO FEET SOULJA
 		return
