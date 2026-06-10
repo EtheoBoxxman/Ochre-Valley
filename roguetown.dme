@@ -3662,6 +3662,7 @@
 #include "modular_causticcove\code\modules\roguecrafting\blacksmith.dm"
 #include "modular_causticcove\code\modules\roguecrafting\items.dm"
 #include "modular_causticcove\code\modules\roguecrafting\leather.dm"
+#include "modular_ochrevalley\code\modules\roguetown\roguejobs\alchemist\container.dm"
 #include "modular_causticcove\code\modules\size_scaling\helperfunctions.dm"
 #include "modular_ochrevalley\code\modules\admin\verbs\debug.dm"
 #include "modular_causticcove\code\modules\size_scaling\mobholder.dm"
