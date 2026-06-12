@@ -1190,6 +1190,7 @@
 		leaving.Bump(src)
 		return COMPONENT_ATOM_BLOCK_EXIT
 
+//OV Add Start - CC Grandfathered Self Revive Cross
 /obj/structure/fluff/psycross/attack_hand(mob/user)
 	. = ..()
 	var/mob/living/carbon/H = user
@@ -1231,8 +1232,16 @@
 		H.remove_status_effect(/datum/status_effect/debuff/rotted_zombie) //Removes the rotted-zombie debuff if they have it - Failsafe for it.
 		H.apply_status_effect(/datum/status_effect/debuff/self_revived)	//Longer debuff for self revival. Hurts like a fuckin' TRUCK.
 		H.update_body()
+		addtimer(CALLBACK(src, PROC_REF(deathmark), H), 5 MINUTES) //Performs a check after the listed time has elapsed, post-resurrection. If the target is still alive by then, it'll apply the 'DNR' trait. //OV Edit
 	else
 		H.visible_message(span_notice("[H] hopelessly clutches the cross, sorrow filling their cold, dead eyes..."), span_red("The Ten cannot help me here... I must find a church..."))
+
+/obj/structure/fluff/psycross/proc/deathmark(mob/living/victim)
+	if(victim.stat != DEAD)
+		victim.apply_status_effect(/datum/status_effect/debuff/permadeath) //The deathmark. This temporarily adds unrevivability to the target; die again while it's active, and your story'll be over.. for now.
+		victim.play_permadeath_indicator()
+		to_chat(victim, span_danger("You suddenly feel a deathly chill from within, as the lux begins to creep across your heart once more. The thread betwixt your soul and body remains thin; to succumb again so soon would ensure its total severance."))
+//OV Add End - CC Grandfathered Self Revive Cross
 
 /obj/structure/fluff/psycross/copper
 	name = "pantheon cross"

@@ -12,8 +12,7 @@
 	desc = "The inevitable union between wildkin and some form of humanity or another. \
 	While they also experience animalistic tendencies akin to their full-blooded ancestors, \
 	their intermingling with others has stemmed the severity of such primordial impulses. \
-	(Half-kin is a mostly animal-like species touched by Dendor intended to serve broadly as a more freeform demi-humen species.  While you're largely given the tools to be whatever creature you wish, you're still meant to be a half-kin, and should have something in mind to explain why your character looks the way they do.)
-	//OV Edit Above Per Server
+	(Half-kin is a mostly animal-like species touched by Dendor intended to serve broadly as a more freeform demi-humen species.  While you're largely given the tools to be whatever creature you wish, you're still meant to be a half-kin, and should have something in mind to explain why your character looks the way they do.)" //OV Edit Above Per Server
 	skin_tone_wording = "Ancestry"
 	default_color = "FFFFFF"
 	species_traits = list(EYECOLOR,HAIR,FACEHAIR,LIPS,STUBBLE,OLDGREY,MUTCOLORS_PARTSONLY)

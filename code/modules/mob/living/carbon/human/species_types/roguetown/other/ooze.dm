@@ -8,7 +8,7 @@
 	within Psydon's Gift awake, lashing its tendrils into matter and forming the core of a being, bubbling and festering into a shape it is vaguely familiar with. \
 	What finally emerges is the Ooze, with some big-headed scholars trying to give them a more 'proper celestial name', although nobody can quite agree on \
 	it. Luxophont, Luxem, Homunculus… Whatever their philological circles babble about, the common man calls them Ooze, for their opaque and liquid-y appearance. \
-	Though hardened by the violent depths, they remain volatile and naive, struggling to understand a surface world that often sees them as monsters.
+	Though hardened by the violent depths, they remain volatile and naive, struggling to understand a surface world that often sees them as monsters."
 	blood_color = "#00FFFF" //Defaults to blue, but we recolor this later to match the slime person's body color.
 	origin_default = /datum/virtue/origin/racial/underdark
 	base_name = "Ooze"
