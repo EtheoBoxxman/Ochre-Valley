@@ -634,7 +634,7 @@ SUBSYSTEM_DEF(gamemode)
 		else if(preset.guaranteed_hard && !preset.block_soft)
 			// Guaranteed-villain preset: the villain took the main injection slot, so the allowed soft antags
 			// (assassin / dreamwalker) each get an independent RNG chance to spawn alongside it.
-			if(istype(ec, /datum/round_event_control/antagonist/solo/dreamwalker) && !preset.allow_dreamwalker)
+			if(!preset.allow_dreamwalker) //OV Edit - (ec, /datum/round_event_control/antagonist/solo/dreamwalker) && !preset.allow_dreamwalker)
 				continue
 			spawn_it = prob(50)
 		if(!spawn_it || !ec.canSpawnEvent(pop))
@@ -809,7 +809,7 @@ SUBSYSTEM_DEF(gamemode)
 // 			if(!SSvote.mode)
 // 				SSvote.initiate_vote("endround", pick("Zlod", "Sun King", "Gaia", "Moon Queen", "Aeon", "Gemini", "Aries"))
 	if(roundvoteend && world.time >= round_ends_at)
-				return TRUE
+		return TRUE
 // OV Edit End
 
 	if(SSmapping.retainer.head_rebel_decree)
@@ -998,7 +998,7 @@ SUBSYSTEM_DEF(gamemode)
 				continue
 			if(preset.starting_point_multipliers[EVENT_TRACK_CHARACTER_INJECTION] <= 0 && !preset.guaranteed_hard)
 				continue
-			if(istype(ec, /datum/round_event_control/antagonist/solo/dreamwalker) && !preset.allow_dreamwalker)
+			if(!preset.allow_dreamwalker) //OV Edit - (ec, /datum/round_event_control/antagonist/solo/dreamwalker) && !preset.allow_dreamwalker)
 				continue
 		var/cap = story_antag_slot_cap(antag_datum, roundstart = TRUE, storyteller_type = storyteller_type)
 		if(cap <= 0)
