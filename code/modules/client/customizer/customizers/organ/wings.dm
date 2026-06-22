@@ -99,7 +99,7 @@
 		/datum/sprite_accessory/wings/dragon/clipped,
 		)
 
-/datum/customizer/organ/wings/harpy
+/datum/customizer/organ/wings/harpy // OV Add Start
 	name = "Harpy Wings"
 	customizer_choices = list(/datum/customizer_choice/organ/wings/harpy)
 	allows_disabling = FALSE
@@ -124,7 +124,7 @@
 		/datum/sprite_accessory/wings/featheryv2,
 		/datum/sprite_accessory/wings/huge/angel,
 	)
-
+// OV Add End
 /datum/customizer/organ/wings/slime
 	customizer_choices = list(/datum/customizer_choice/organ/wings/slime)
 	allows_disabling = TRUE

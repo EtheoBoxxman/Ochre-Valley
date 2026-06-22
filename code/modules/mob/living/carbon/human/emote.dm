@@ -171,7 +171,7 @@
 /mob/living/carbon/human/proc/CloseWings()
 	return
 
-/datum/emote/living/carbon/human/wingsfly
+/datum/emote/living/carbon/human/wingsfly // OV Add Start
 	key = "wingsfly"
 
 /datum/emote/living/carbon/human/wingsfly/run_emote(mob/user, params, type_override, intentional)
@@ -188,7 +188,7 @@
 		H.visible_message(
 			span_biginfo("<span style='color:#[H.voice_color];text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b>[H]</b></span></span><span style='color: #c9c1ba;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'> flaps [H.p_their()] wings no more, as [H.p_they()] is back on the ground!</span>"),
 			runechat_message = "stops flapping [H.p_their()] wings!"
-		)
+		) // OV Add End
 
 /mob/living/carbon/human/verb/hand_games()
 	set name = "Handgames"

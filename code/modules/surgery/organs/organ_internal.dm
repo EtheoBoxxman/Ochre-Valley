@@ -50,7 +50,7 @@
 	/// Whether this organ has ever been inside a mob
 	var/had_owner = FALSE
 	/// Whether or not this organ should be regenerated at /datum/job/proc/equip() in _job.dm via /mob/living/carbon/proc/apply_organ_stuff()
-	var/should_regenerate = FALSE
+	var/should_regenerate = FALSE // OV Add
 
 	grid_width = 32
 	grid_height = 32
@@ -412,7 +412,7 @@
 			var/obj/item/organ/ears/ears = new()
 			ears.Insert(src)
 
-/mob/living/carbon/proc/apply_organ_stuff()
+/mob/living/carbon/proc/apply_organ_stuff() // OV Add
 	if(dna?.species)
 		dna.species.apply_organ_stuff_species(src)
 		return

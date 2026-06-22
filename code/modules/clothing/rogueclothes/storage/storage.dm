@@ -548,7 +548,7 @@
     . = ..()
     . |= FALL_NO_MESSAGE
 
-/obj/item/rogueweapon/huntingknife/idagger/harpy_talons
+/obj/item/rogueweapon/huntingknife/idagger/harpy_talons // OV Add Start
 	name = "talons"
 	desc = "Harpy talons. Birds of prey and all..."
 	experimental_inhand = FALSE
@@ -718,7 +718,7 @@
 /obj/item/harpy_leg/intercept_zImpact(atom/movable/AM, levels = 1) // with this shit it doesn't generate "X falls through open space". thank u guppyluxx
 	. = ..()
 	. |= FALL_NO_MESSAGE
-
+// OV Add End
 /obj/item/storage/hip/orestore/bronze
 	name = "mechanized ore bag"
 	desc = "A becogged bag for sorting and compressing ore, ingots, and gemeralds. It idly ticks to the rhythm of unseen mechanisms, yearning for earthly treats."

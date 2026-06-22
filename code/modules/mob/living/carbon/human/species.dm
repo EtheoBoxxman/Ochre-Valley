@@ -92,8 +92,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	// generic traits tied to having the species
 	var/list/inherent_traits = list()
 	var/inherent_biotypes = MOB_ORGANIC|MOB_HUMANOID
-	///Associative list of skills to adjustments
-	var/list/inherent_skills = list()
+	///Associative list of skills to adjustments // OV Add Start
+	var/list/inherent_skills = list() // OV Add End
 	///List of factions the mob gain upon gaining this species.
 	var/list/inherent_factions
 
@@ -415,7 +415,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 			var/datum/organ_dna/new_dna = neworgan.create_organ_dna()
 			C.dna.organ_dna[slot] = new_dna
 
-/datum/species/proc/apply_organ_stuff_species(mob/living/carbon/C)
+/datum/species/proc/apply_organ_stuff_species(mob/living/carbon/C) // OV Add 
 	var/obj/item/organ/organ
 
 	for(organ in C.internal_organs)

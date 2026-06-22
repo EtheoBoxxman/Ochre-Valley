@@ -466,7 +466,7 @@
 		//OV Add End
 		)
 
-/datum/customizer/organ/ears/harpy
+/datum/customizer/organ/ears/harpy // OV Add Start
 	name = "Harpy Ears"
 	customizer_choices = list(/datum/customizer_choice/organ/ears/harpy)
 	allows_disabling = TRUE
@@ -496,7 +496,7 @@
 		/datum/sprite_accessory/ears/big/sandfox_large,
 		/datum/sprite_accessory/ears/lynx,
 	)
-
+// OV Add End
 // Slimes
 /datum/customizer/organ/ears/slime
 	customizer_choices = list(/datum/customizer_choice/organ/ears/slime)

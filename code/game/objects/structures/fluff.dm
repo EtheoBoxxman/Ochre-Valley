@@ -179,7 +179,7 @@
 		return 1
 	if(isliving(mover))
 		var/mob/living/M = mover
-		if(M.movement_type & FLYING)
+		if(M.movement_type & FLYING) // OV Edit
 			return 1
 		if(!(M.mobility_flags & MOBILITY_STAND))
 			if(pass_crawl)

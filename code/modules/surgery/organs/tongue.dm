@@ -295,11 +295,11 @@
 		/mob/living/carbon/human/proc/emote_growl,
 		/mob/living/carbon/human/proc/emote_prbt,
 		/mob/living/carbon/human/proc/emote_bleat,
-		/mob/living/carbon/human/proc/emote_warble,
+		/mob/living/carbon/human/proc/emote_warble, // OV Add Start
 		/mob/living/carbon/human/proc/emote_raptor,
 		/mob/living/carbon/human/proc/emote_dove,
 		/mob/living/carbon/human/proc/emote_loudcaw,
-		/mob/living/carbon/human/proc/wurble
+		/mob/living/carbon/human/proc/wurble // OV Add End
 	)
 
 /obj/item/organ/tongue/moth
@@ -310,7 +310,7 @@
 		/mob/living/carbon/human/proc/emote_flutter,
 	)
 
-/obj/item/organ/tongue/harpy
+/obj/item/organ/tongue/harpy // OV Add Start
 	name = "bird tongue"
 	desc = "Chirp chirp chirp chirp chirp!!"
 	icon_state = "tongue-con"
@@ -345,4 +345,4 @@
 		/mob/living/carbon/human/proc/emote_loudcaw,
 		/mob/living/carbon/human/proc/emote_raptor,
 		/mob/living/carbon/human/proc/wurble
-	)
+	) // OV Add End

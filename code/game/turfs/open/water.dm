@@ -183,7 +183,7 @@
 		if (istype(src,/turf/open/water/bloody))
 			L.add_mob_blood(L)
 
-			if(!(L.mobility_flags & MOBILITY_STAND) || water_level == 3)
+			if(!(L.mobility_flags & MOBILITY_STAND) || water_level == 3) // OV Edit Start
 				L.SoakMob(FULL_BODY)
 			else
 				if(water_level == 2)
@@ -200,7 +200,7 @@
 					spawn(6)
 						if(AM.loc == src)
 							water_overlay.layer = ABOVE_MOB_LAYER
-							water_overlay.plane = GAME_PLANE_HIGHEST
+							water_overlay.plane = GAME_PLANE_HIGHEST // OV Edit End
 		if(!istype(L, /mob/living/carbon/human/species/skeleton))
 			return
 		if(!istype(src, /turf/open/water/sewer))

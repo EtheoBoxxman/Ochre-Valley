@@ -21,7 +21,7 @@
 	var/chokehold = FALSE
 	experimental_inhand = FALSE
 
-/obj/item/grabbing/intercept_zImpact(atom/movable/AM, levels = 1) // with this shit it doesn't generate "X falls through open space". thank u guppyluxx
+/obj/item/grabbing/intercept_zImpact(atom/movable/AM, levels = 1) // OV Add - with this shit it doesn't generate "X falls through open space". thank u guppyluxx
 	. = ..()
 	. |= FALL_NO_MESSAGE
 

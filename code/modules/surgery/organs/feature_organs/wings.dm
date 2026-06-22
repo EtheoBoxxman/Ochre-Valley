@@ -15,8 +15,8 @@
 	///Whether the owner of wings has flight thanks to the wings
 	var/granted_flight
 
-	icon = 'icons/mob/sprite_accessory/wings/wings_64x32.dmi'
-	icon_state = "harpyfolded_FRONT"
+	icon = 'icons/mob/sprite_accessory/wings/wings_64x32.dmi' // OV Add Start
+	icon_state = "harpyfolded_FRONT" // OV Add End
 
 /obj/item/organ/wings/moth
 	name = "fluvian wings"
@@ -52,7 +52,7 @@
 	name = "Vampire Wings"
 	accessory_type = /datum/sprite_accessory/wings/large/gargoyle
 
-/obj/item/organ/wings/harpy // we could... make it an arm subtype... but im lazy!
+/obj/item/organ/wings/harpy // OV Add Start - we could... make it an arm subtype... but im lazy!
 	name = "harpy wings"
 	desc = "Oh, to fly again and feel the wind..."
 	should_regenerate = TRUE
@@ -136,4 +136,4 @@
 	playsound(user, pick(swoop_sound), 100)
 	user.emote("wingsfly", forced = TRUE)
 	if(prob(1)) // somebody, call saint jiub!!
-		playsound(user, 'sound/foley/footsteps/flight_sounds/cliffracer.ogg', 100)
+		playsound(user, 'sound/foley/footsteps/flight_sounds/cliffracer.ogg', 100) // OV Add End

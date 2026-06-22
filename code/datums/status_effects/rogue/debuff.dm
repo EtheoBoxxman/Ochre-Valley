@@ -850,8 +850,8 @@
 	name = "Mesmerised"
 	desc = span_warning("Their beauty is otherwordly..")
 	icon_state = "acid"
-
-/////////////////////////
+// OV Add Start
+///////////////////////// 
 ///HARPY FLIGHT STUFF///
 ///////////////////////
 
@@ -1092,7 +1092,7 @@
 /////////////////////////////
 ///HARPY FLIGHT STUFF END///
 ///////////////////////////
-
+// OV Add End
 /datum/status_effect/debuff/liver_failure
 	id = "liver_failure"
 	alert_type = null

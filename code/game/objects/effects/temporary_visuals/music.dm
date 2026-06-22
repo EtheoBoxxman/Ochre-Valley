@@ -54,7 +54,7 @@
 			if (H != owner && HAS_TRAIT(H, TRAIT_XYLIX) && !H.has_status_effect(/datum/status_effect/buff/xylix_joy))
 				H.apply_status_effect(/datum/status_effect/buff/xylix_joy)
 				to_chat(H, span_info("The music brings a smile to my face, and fortune to my steps!"))
-
+// OV Add Start
 ////////////////////
 ///HARPY SINGING///
 //////////////////
@@ -81,7 +81,7 @@
 	if(harpy.has_status_effect(/datum/status_effect/buff/playing_music))
 		var/obj/item/organ/vocal_cords/harpy/vocal_cords = harpy.getorganslot(ORGAN_SLOT_VOICE)
 		vocal_cords.vocals.attack_self(harpy)
-
+// OV Add End
 /obj/effect/temp_visual/songs
 	name = "songs"
 	icon = 'icons/mob/actions/bardsong_anims.dmi'

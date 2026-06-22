@@ -199,6 +199,6 @@
 	name = "cobra hood"
 	accessory_type = /datum/sprite_accessory/ears/cobrahood
 
-/obj/item/organ/ears/harpy
+/obj/item/organ/ears/harpy // OV Add
 	name = "harpy ears"
 	desc = "You are a monster."

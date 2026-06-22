@@ -368,7 +368,7 @@
 		)
 	allows_accessory_color_customization = TRUE
 
-/datum/customizer/organ/tail/harpy
+/datum/customizer/organ/tail/harpy // OV Add Start
 	name = "Harpy Plumage"
 	customizer_choices = list(/datum/customizer_choice/organ/tail/harpy)
 	allows_disabling = TRUE
@@ -386,7 +386,7 @@
 		/datum/sprite_accessory/tail/haven,
 		/datum/sprite_accessory/tail/swallow
 	)
-
+// OV Add End
 // Slimes
 /datum/customizer/organ/tail/slime
 	customizer_choices = list(/datum/customizer_choice/organ/tail/slime)

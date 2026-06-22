@@ -488,7 +488,7 @@
 	    /datum/sprite_accessory/snout/masked,
 		)
 
-/datum/customizer/organ/snout/harpy
+/datum/customizer/organ/snout/harpy // OV Add Start
 	name = "Harpy Beak"
 	customizer_choices = list(/datum/customizer_choice/organ/snout/harpy)
 	allows_disabling = TRUE
@@ -522,4 +522,4 @@
 		/datum/sprite_accessory/snout/stubby,
 		/datum/sprite_accessory/snout/stubbyalt,
 	)
-
+// OV Add End

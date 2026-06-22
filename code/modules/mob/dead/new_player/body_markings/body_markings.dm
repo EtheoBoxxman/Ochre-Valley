@@ -382,7 +382,7 @@
 	icon_state = "bun_s"
 	default_color = "FFFFFF"
 	affected_bodyparts = HEAD
-
+// OV Add Start
 /datum/body_marking/harpy_feet_claws
 	icon = 'icons/mob/body_markings/harpy_markings.dmi'
 	name = "Feet Claws"
@@ -396,3 +396,4 @@
 	icon_state = "hleg"
 	affected_bodyparts = LEG_LEFT | LEG_RIGHT
 	default_color = DEFAULT_SECONDARY
+// OV Add End

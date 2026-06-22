@@ -59,7 +59,7 @@ GLOBAL_LIST_INIT(our_forest_sex, typecacheof(list(
 
 #define istransparentturf(A) (istype(A, /turf/open/transparent) || istype(A, /turf/closed/transparent))
 
-#define isopenspace(A) (istype(A, /turf/open/transparent/openspace))
+#define isopenspace(A) (istype(A, /turf/open/transparent/openspace)) // OV Add
 
 //Mobs
 #define isliving(A) (istype(A, /mob/living))
@@ -105,7 +105,7 @@ GLOBAL_LIST_INIT(our_forest_sex, typecacheof(list(
 #define ismoth(A) (is_species(A, /datum/species/moth))
 #define istabaxi(A) (is_species(A, /datum/species/tabaxi))
 #define isvulp(A) (is_species(A, /datum/species/vulpkanin))
-#define isharpy(A) (is_species(A, /datum/species/harpy))
+#define isharpy(A) (is_species(A, /datum/species/harpy)) // OV Add
 #define isooze(A) (is_species(A, /datum/species/ooze)) //OV ADD
 #define isgnoll(A) (is_species(A, /datum/species/gnoll))
 

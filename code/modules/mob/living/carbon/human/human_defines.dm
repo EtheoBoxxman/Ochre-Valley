@@ -85,7 +85,7 @@
 
 	var/list/datum/bioware = list()
 
-	var/static/list/can_ride_typecache = typecacheof(list(
+	var/static/list/can_ride_typecache = typecacheof(list( // OV Edit
 		/mob/living/carbon/human,
 		/mob/living/simple_animal/hostile,
 		/mob/living/carbon/human/species/goblin,

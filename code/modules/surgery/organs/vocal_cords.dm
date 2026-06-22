@@ -23,7 +23,7 @@
 /obj/item/organ/vocal_cords/proc/handle_speech(message) //actually say the message
 	owner.say(message, spans = spans, sanitize = FALSE)
 
-/obj/item/organ/vocal_cords/harpy
+/obj/item/organ/vocal_cords/harpy // OV Add Start
 	name = "harpy's song"
 	icon_state = "harpysong"		//Pulsating heart energy thing.
 	desc = "The blessed essence of harpysong. How did you get this... you monster!"
@@ -66,7 +66,7 @@
 	var/obj/item/organ/vocal_cords/harpy/vocal_cords = harpy.getorganslot(ORGAN_SLOT_VOICE)
 	vocal_cords.vocals.attack_self(harpy)
 	if(prob(1)) // somebody, call saint jiub!!
-		playsound(user, 'sound/foley/footsteps/flight_sounds/cliffracer.ogg', 100)
+		playsound(user, 'sound/foley/footsteps/flight_sounds/cliffracer.ogg', 100) // OV Add End
 
 /obj/item/organ/adamantine_resonator
 	name = "adamantine resonator"
