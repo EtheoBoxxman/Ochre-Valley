@@ -144,7 +144,10 @@
 		d_list, H, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%"
 	)
 	add_bounty(H.real_name, race, gender, descriptor_height, descriptor_body, descriptor_voice, bounty_total, FALSE, my_crime, bounty_poster)
-	to_chat(H, span_danger("You are playing a soft-antagonist role: an outcast, an outlaw, or even possibly a heretic of your faith. You are unwanted by society and likely have a bounty others may try to collect. By choosing to spawn as a Wretch, you are expected to provide texture to the round and setting's story through your actions, friction with other narratives, or possibly outright conflict with other players. This role does not give you the go-ahead to attack others without proper escalation, to bypass server etiquette rules such as rushing PvE content or breaking into undefended areas, or cause major disruptions such as summoning skeletons in the town square. Failure to treat this with appropriate gravitas may result in administrative action. Play these roles to enhance the story for everyone, not to win for yourself.")) //OV - Edit
+	if(H.has_flaw(/datum/charflaw/wanted))
+		to_chat(H, span_danger("You are wanted; you have a price on your head. Expect the potential for conflict to find you whether you seek it or not.")) //OV Edit
+	else
+		to_chat(H, span_danger("You are playing a soft-antagonist role: an outcast, an outlaw, or even possibly a heretic of your faith. You are unwanted by society and likely have a bounty others may try to collect. By choosing to spawn as a Wretch, you are expected to provide texture to the round and setting's story through your actions, friction with other narratives, or possibly outright conflict with other players. This role does not give you the go-ahead to attack others without proper escalation, to bypass server etiquette rules such as rushing PvE content or breaking into undefended areas, or cause major disruptions such as summoning skeletons in the town square. Failure to treat this with appropriate gravitas may result in administrative action. Play these roles to enhance the story for everyone, not to win for yourself.")) //OV - Edit
 
 /// Returns an assoc list with all intermediate wretch scaling values for admin display.
 /// If override_player_count is provided (e.g. from readied player count at roundstart), use that instead of the live joined list.
