@@ -4,8 +4,8 @@
 	department_flag = ANTAGONIST
 	antag_job = TRUE // whoever wrote this, I'm- gghrhhah!
 	faction = "Station"
-	total_positions = 4 //OV Edit - Increased Spawn Count
-	spawn_positions = 4 //OV Edit - Increased Spawn Count
+	total_positions = 0
+	spawn_positions = 0
 	forbidden_races = list(RACES_CONSTRUCT RACES_DESPISED)
 	tutorial = "You have proven yourself worthy to Graggar, and he's granted you his blessing most divine. Now you hunt for worthy opponents, seeking out those strong enough to make you bleed."
 	outfit = null
