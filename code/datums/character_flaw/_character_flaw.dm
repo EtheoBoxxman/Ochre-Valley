@@ -212,6 +212,22 @@ GLOBAL_LIST_INIT(averse_factions, list(
 /datum/charflaw/badsight/proc/apply_reading_skill(mob/living/carbon/human/H)
 	H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
 
+/datum/charflaw/proc/get_nearby_humans(mob/user, range)
+	. = list()
+	for(var/mob/M in get_hearers_in_view(range, user, RECURSIVE_CONTENTS_CLIENT_MOBS))
+		if(M == user)
+			continue
+		if(M.stat)
+			continue
+		var/mob/living/carbon/human/H = M
+		if(istype(H) && H.dna.species)
+			. += H
+		var/obj/shapeshift_holder/S = locate(/obj/shapeshift_holder) in M
+		if(S && ishuman(S.stored))
+			H = S.stored
+			if(H != user && H.dna.species)
+				. += H
+
 /datum/charflaw/paranoid
 	name = "Paranoid"
 	desc = "I'm even more anxious than most people. I'm extra paranoid of other races and the sight of blood."
@@ -224,11 +240,7 @@ GLOBAL_LIST_INIT(averse_factions, list(
 		return
 	last_check = world.time
 	var/cnt = 0
-	for(var/mob/living/carbon/human/L in hearers(7, user))
-		if(L == src)
-			continue
-		if(L.stat)
-			continue
+	for(var/mob/living/carbon/human/L in get_nearby_humans(user, 7))
 		if(L.dna?.species)
 			if(ishuman(user))
 				var/mob/living/carbon/human/H = user
@@ -259,24 +271,7 @@ GLOBAL_LIST_INIT(averse_factions, list(
 	if(is_active)
 		if(world.time > next_check)
 			next_check = world.time + interval
-			var/cnt = 0
-			//OV edit - If you have prey or are in prey, always count as having 1 person nearby (no matter how many you've eaten)
-			for(var/obj/belly/our_belly in user.vore_organs)
-				for(var/mob/living/our_prey in our_belly.contents)
-					if(our_prey.client)
-						cnt = 1
-			if(istype(user.loc,/obj/belly))
-				cnt = 1
-			//OV edit end
-			for(var/mob/living/carbon/human/L in get_hearers_in_view(6, user, RECURSIVE_CONTENTS_CLIENT_MOBS))
-				if(L == user)
-					continue
-				if(L.stat)
-					continue
-				if(L.dna.species)
-					cnt++
-				if(cnt > 3)
-					break
+			var/cnt = length(get_nearby_humans(user, 6))
 			var/mob/living/carbon/P = user
 			if(cnt > 3)
 				P.add_stress(/datum/stressevent/crowd)
@@ -305,30 +300,8 @@ GLOBAL_LIST_INIT(averse_factions, list(
 	if(is_active && user.stat == CONSCIOUS)
 		if(world.time > next_check)
 			next_check = world.time + interval
-			var/cnt = 0
-			//OV edit - Always pass if there's vore
-			for(var/obj/belly/our_belly in user.vore_organs)
-				if(cnt > 3)
-					break
-				for(var/mob/living/our_prey in our_belly.contents)
-					if(our_prey.client)
-						cnt++
-						if(cnt > 3)
-							break
-			if(istype(user.loc,/obj/belly))
-				cnt++
-			//OV edit end
-			for(var/mob/living/carbon/human/L in get_hearers_in_view(7, user, RECURSIVE_CONTENTS_CLIENT_MOBS))
-				if(L == user)
-					continue
-				if(L.stat)
-					continue
-				if(L.dna.species)
-					cnt++
-				if(cnt > 3)
-					break
 			var/mob/living/carbon/P = user
-			if(cnt <= 0)
+			if(length(get_nearby_humans(user, 7)) <= 0)
 				handle_stacks(P)
 			else
 				reset_stacks(P)
@@ -387,18 +360,22 @@ GLOBAL_LIST_INIT(averse_factions, list(
 				user.remove_stress(/datum/stressevent/nopeople)
 				cnt++
 			//OV edit end
-			for(var/mob/living/carbon/human/L in get_hearers_in_view(2, user))
-				if(L == user)
-					continue
-				if(L.stat == DEAD)
-					continue
-				var/dist = get_dist(L, user)
-				if(dist <= 1)
-					distfound = TRUE
-					user.remove_stress(/datum/stressevent/nopeople)
-					break
-				if(L.dna.species)
+			for(var/mob/living/carbon/human/L in get_nearby_humans(user, 7)) // the distance check won't work if you're shapeshifted without some extra logic
+				var/obj/shapeshift_holder/S = locate(/obj/shapeshift_holder) in L
+				if(S && S.shape && S.stored)
+					if(get_dist(S.shape, user) <= 1)
+						distfound = TRUE
+						user.remove_stress(/datum/stressevent/nopeople)
+						break
 					cnt++
+				else
+					var/dist = get_dist(L, user)
+					if(dist <= 1)
+						distfound = TRUE
+						user.remove_stress(/datum/stressevent/nopeople)
+						break
+					if(L.dna.species)
+						cnt++
 				if(cnt >= 2)
 					user.remove_stress(/datum/stressevent/nopeople)
 					break
