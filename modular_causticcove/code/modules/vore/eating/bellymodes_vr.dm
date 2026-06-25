@@ -386,6 +386,6 @@
 	if((L.energy > 5) && (L.client))
 		L.energy_add(-5)
 		owner.adjust_nutrition(5)
-		prob(3)
+		if(prob(3))
 			to_chat(L, span_warning("Your energy is slowly being siphoned away..."))
 //OV edit end
