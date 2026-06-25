@@ -163,6 +163,18 @@
 	var/current_item_count = 0
 	var/list/quest_items = list()
 
+	var/turn_in_areas = list(
+		/area/rogue/indoors/town/tavern,
+		/area/rogue/indoors/town/bath,
+		/area/rogue/indoors/town/church,
+		/area/rogue/indoors/town/dwarfin,
+		/area/rogue/indoors/town/shop,
+		/area/rogue/indoors/town/manor,
+		/area/rogue/indoors/town/magician,
+		/area/rogue/indoors/town/physician,
+		/area/rogue/indoors/town,
+	)
+
 	var/quest_title = tgui_input_text(user, "What is the quest title?", "Title")
 	if(!quest_title)
 		return
@@ -175,12 +187,13 @@
 		return
 
 	while(current_item_count < 21)
-		var/the_item = tgui_input_list(user, "Choose the type of item that needs to be recovered.", "Item", list_of_items)
+		var/the_item = tgui_input_list(user, "Choose the type of item that needs to be recovered. Cancel to finish adding items. (max of 20)", "Item", list_of_items)
 		if(!the_item)
 			break
 		else
 			var/remaining_count = 20 - current_item_count
-			var/number_to_add = tgui_input_number(user, "How many of this item to include?", "Item", 1, remaining_count)
+			var/number_to_add = tgui_input_number(user, "How many of this item to include ([remaining_count] remaining)?", "Item", 1, remaining_count)
+			to_chat(user, "Added [number_to_add] of [the_item]")
 			while(number_to_add > 0)
 				quest_items += the_item
 				number_to_add--
@@ -192,7 +205,7 @@
 	if(!shipment_name)
 		return
 	
-	var/area/target_area = tgui_input_list(user, "Where is the delivery area?", "Delivery", GLOB.sortedAreas)
+	var/area/target_area = tgui_input_list(user, "Where is the delivery area?", "Delivery", turn_in_areas)
 	if(!target_area)
 		return
 	
@@ -203,12 +216,13 @@
 	var/datum/threat_region/where_to_spawn = regions[selected]
 
 	while(current_mob_count < 21)
-		var/mob_to_add = tgui_input_list(user, "Choose a mob that needs killing, cancel to finish adding mobs.", "Mob", list_of_mobs)
+		var/mob_to_add = tgui_input_list(user, "Choose a mob that needs killing, cancel to finish adding mobs. (max of 20)", "Mob", list_of_mobs)
 		if(!mob_to_add)
 			break
 		else
 			var/remaining_count = 20 - current_mob_count
-			var/number_to_add = tgui_input_number(user, "How many of this mob to include?", "Mob", 1, remaining_count)
+			var/number_to_add = tgui_input_number(user, "How many of this mob to include ([remaining_count] remaining)?", "Mob", 1, remaining_count)
+			to_chat(user, "Added [number_to_add] of [mob_to_add]")
 			while(number_to_add > 0)
 				quest_mobs += mob_to_add
 				number_to_add--
@@ -231,7 +245,7 @@
 	
 	var/spawn_loc = get_turf(user)
 
-	SSquestpool.gm_recovery_quest(quest_title, reward, bands_of_threat, fellowship_size, where_to_spawn, quest_mobs, ledger_or_floor, spawn_loc, crimes, quest_items, target_area)
+	SSquestpool.gm_recovery_quest(quest_title, reward, bands_of_threat, fellowship_size, where_to_spawn, quest_mobs, ledger_or_floor, spawn_loc, crimes, quest_items, target_area, shipment_name)
 
 /datum/controller/subsystem/questpool/proc/gm_recovery_quest(quest_title, reward, bands_of_threat, fellowship_size, datum/threat_region/where_to_spawn, list/quest_mobs, ledger_or_floor, spawn_loc, crimes, list/quest_items, target_area, shipment_name)
 	message_admins("Entered subsystem")
@@ -299,7 +313,6 @@
 	return "Recover Essential Items."
 
 /datum/quest/kill/recovery/generated/materialize(obj/effect/landmark/quest_spawner/landmark)
-	..()
 	if(!landmark)
 		return FALSE
 	spawn_kill_mobs(landmark)
@@ -360,7 +373,7 @@
 		return
 	var/obj/item/parcel/recovered = new(spawn_turf)
 	// Pack shipment_count copies of target_delivery_item into the parcel's list.
-	for(var/obj/item/our_item in quest_items)
+	for(var/our_item in quest_items)
 		var/obj/item/I = new our_item(recovered)
 		recovered.contained_items += I
 	recovered.delivery_area_type = target_delivery_location
