@@ -30,7 +30,7 @@
 	tutorial = "In another life, your intellect, connections, and aptitude for blending well-worked bronze with Arcyne mysteries would have made for a fine guildsman. Whilst unnaccustomed to combat, your cleverness and inventions offer you a novel edge."
 	outfit = /datum/outfit/job/roguetown/adventurer/tinkerer
 	cmode_music = 'sound/music/cmode/adventurer/combat_outlander3.ogg'
-	traits_applied = list(TRAIT_SEEPRICES, TRAIT_DECEIVING_MEEKNESS, TRAIT_ARCYNE, TRAIT_SMITHING_EXPERT)
+	traits_applied = list(TRAIT_SEEPRICES, TRAIT_DECEIVING_MEEKNESS, TRAIT_ARCYNE, TRAIT_SMITHING_EXPERT, TRAIT_LEYLINE_ATTUNEMENT)
 	subclass_stats = list(
 		STATKEY_INT = 3,
 		STATKEY_PER = 2,
@@ -81,7 +81,7 @@
 			if("Voltic Gauntlets")
 				H.adjust_skillrank_up_to(/datum/skill/combat/unarmed, SKILL_LEVEL_APPRENTICE, TRUE)
 				gloves = /obj/item/clothing/gloves/roguetown/chain/contraption/voltic/precharged
-				H.change_stat(STATKEY_STR, 2) //we're gonna make the gauntlet tinkerers punchier and slower. trust me, they'll want this
+				H.change_stat(STATKEY_STR, 2) //we're gonna make the gauntlet tinkerers punchier and slower. trust me, they'll want this. This changes them from a +2 spd, -1 str class, to a +1 str class
 				H.change_stat(STATKEY_SPD, -2)
 				to_chat(H, span_warning("Compared to your average Tinkerer, I'm a bit burly (+2 Strength, -2 Speed)"))
 			if("Bronze Arms")
