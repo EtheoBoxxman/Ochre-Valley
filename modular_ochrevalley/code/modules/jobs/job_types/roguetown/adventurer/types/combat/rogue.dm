@@ -134,6 +134,7 @@
 		/obj/item/recipe_book/survival = 1,
 		/obj/item/chalk = 1,
 		/obj/item/lockpick = 1,
+		/obj/item/rogueweapon/hammer/iron,
 		/obj/item/clothing/mask/rogue/spectacles/golden = 1// a good tinkerer needs a pair of sickass looking goggles. In backpack so vices won't replace 'em
 		)
 	H.AddSpell(new /obj/effect/proc_holder/spell/invoked/secularbarter) //They have the Connections like an antiquarian does, but none of the alchemical tricks
