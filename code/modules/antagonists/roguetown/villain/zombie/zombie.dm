@@ -52,9 +52,6 @@
 		//TRAIT_NORUN, re-add if zombies become too problematic
 		TRAIT_SILVER_WEAK,
 		TRAIT_DEADITE,
-		//Caustic edit
-		TRAIT_NECRAS_ABATEMENT,
-		//Caustic edit end
 	)
 	/// Traits applied to the owner when we are cured and turn into just "rotmen"
 	var/static/list/traits_rotman = list(
@@ -221,9 +218,6 @@
 				ADD_TRAIT(zombie, trait, "[type]")
 			to_chat(zombie, span_green("I no longer crave for flesh... <i>But I still feel ill.</i>"))
 		else
-			//Caustic edit
-			zombie.remove_status_effect(/datum/status_effect/buff/deadite_pacified)
-			//Caustic edit end
 			if(!was_i_undead)
 				zombie.mob_biotypes &= ~MOB_UNDEAD
 			zombie.faction -= "undead"
@@ -340,7 +334,7 @@
 	zombie.Unconscious(15) //Brief Knockout
 	//OV Add Start
 	if(zombie.show_redflash())
-		zombie.flash_fullscreen("redflash3")
+	zombie.flash_fullscreen("redflash3")
 	//OV Add End
 	zombie.visible_message(span_warning("[zombie] convulses on the floor momentarily, skin rotting away unnaturally fast..."))
 	sleep(2 SECONDS) //Second message, another small gap to notice something is very fucking wrong if the previous que wasn't enough.
@@ -396,11 +390,6 @@
 	if(zombie.stat >= DEAD)
 		//could not revive
 		qdel(src)
-	//Caustic edit
-	var/area/rogue/our_area = get_area(zombie)
-	if((our_area.town_area))
-		zombie.apply_status_effect(/datum/status_effect/buff/deadite_pacified)
-	//Caustic edit end
 
 /datum/antagonist/zombie/greet()
 	to_chat(owner.current, span_userdanger("Death is not the end..."))
