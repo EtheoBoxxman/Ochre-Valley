@@ -160,13 +160,13 @@
 		log_combat(src,T,"Shredded (hardvore)")
 
 /mob/living/proc/shred_limb_temp()
-	set name = "Damage Prey's Organ (beartrap)"
+	set name = "Damage Prey's Organ (beartrap)" //OV EDIT
 	set desc = "Severely damages prey's organ. If the limb is already severely damaged, it will be torn off."
 	set category = "Vore.Actions" //OV EDIT
 	shred_limb()
 
 /mob/verb/toggle_vore_health_bars()
-	set name = "Toggle Auto Healthbars" // OV Edit
+	set name = "Toggle Auto Healthbars"
 	set category = "Vore.Preferences" // OV Edit
 
 	if(client?.prefs)

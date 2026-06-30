@@ -1331,7 +1331,7 @@
 	to_chat(src, total_report)
 
 /mob/living/verb/vore_transfer_reagents()
-	set name = "Transfer Liquid"
+	set name = "Transfer Liquid" // OV Edit
 	set category = "Vore.Vorgan Liquids" //OV EDIT
 	set desc = "Transfer liquid from an organ to another or stomach, or into another person or container."
 	set popup_menu = FALSE
