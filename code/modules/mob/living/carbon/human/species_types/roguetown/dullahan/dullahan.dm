@@ -181,6 +181,9 @@
 		/datum/body_marking/harlequinreversed,
 		/datum/body_marking/gradient,
 		//Caustic edit end
+		/datum/body_marking/waist,
+		/datum/body_marking/womb_tattoo,
+		/datum/body_marking/butterfly
 	)
 	descriptor_choices = list(
 		/datum/descriptor_choice/trait,
