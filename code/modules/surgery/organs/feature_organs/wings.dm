@@ -98,7 +98,7 @@
 	if(HAS_TRAIT(user, TRAIT_NATURAL_ARMOR))
 		to_chat(user, span_bloody("MY NATURAL ARMOR IS TOO DENSE, MY WINGS ARE USELESS!!"))
 		return
-	if(harpy_AC != ARMOR_CLASS_NONE)
+	if(harpy_AC >= ARMOR_CLASS_MEDIUM)
 		to_chat(user, span_bloody("THE ARMOR WEIGHS ME DOWN!!")) // LIGHT ON YO FEET SOULJA
 		return
 	if(user.buckled)
