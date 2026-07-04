@@ -134,7 +134,7 @@
 		/obj/item/rogueweapon/huntingknife/idagger/steel/parrying = 1,
 		/obj/item/recipe_book/survival = 1,
 		/obj/item/chalk = 1,
-		/obj/item/lockpick = 1,
+		/obj/item/rogueweapon/handsaw = 1,
 		/obj/item/rogueweapon/hammer/iron,
 		/obj/item/clothing/mask/rogue/spectacles/golden = 1// a good tinkerer needs a pair of sickass looking goggles. In backpack so vices won't replace 'em
 		)
