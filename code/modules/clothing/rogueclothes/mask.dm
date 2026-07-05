@@ -1011,3 +1011,17 @@
 
 /obj/item/clothing/mask/rogue/flutedmailleiron/ComponentInitialize()
 	AddComponent(/datum/component/adjustable_clothing, NECK, null, null, 'sound/foley/equip/rummaging-03.ogg', null, (UPD_HEAD|UPD_MASK))	//Standard mask
+
+//OV ADD START
+/obj/item/clothing/mask/rogue/xylixmask/tragedianhalf
+	name = "half-tragedian mask"
+	icon = 'modular_ochrevalley\icons\roguetown\clothing\masks.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/masks.dmi'
+	item_state = "xylix_weathered"
+	icon_state = "xylix_weathered"
+	desc = "A Jester's tragedian mask, halfed and sat upon the face to reflect despair and sadness, for those who either are absorbed by melancholy or denied their own frown."
+	// No armor anyways
+	max_integrity = 200
+	// Not messing with jester mask, but again, it has no armor. many other masks also don't block vision.
+	block2add = FOV_DEFAULT
+//OV ADD END
