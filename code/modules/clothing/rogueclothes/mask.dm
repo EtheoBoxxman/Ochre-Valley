@@ -1022,6 +1022,7 @@
 	desc = "A Jester's tragedian mask, halfed and sat upon the face to reflect despair and sadness, for those who either are absorbed by melancholy or denied their own frown."
 	// No armor anyways
 	max_integrity = 200
+	flags_inv = NONE
 	// Not messing with jester mask, but again, it has no armor. many other masks also don't block vision.
 	block2add = FOV_DEFAULT
 //OV ADD END
