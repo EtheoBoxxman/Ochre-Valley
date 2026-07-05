@@ -20,6 +20,7 @@
 		/obj/item/bodypart/taur/lamia,
 		/obj/item/bodypart/taur/spider,
 		/obj/item/bodypart/taur/horse,
+		/obj/item/bodypart/taur/goat,
 		///Caustic edit
 		/obj/item/bodypart/taur/cow,
 		/obj/item/bodypart/taur/lizard,

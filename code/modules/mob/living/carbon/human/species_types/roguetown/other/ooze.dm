@@ -77,6 +77,7 @@
 		/obj/item/bodypart/taur/mammoth,
 		/obj/item/bodypart/taur/biglegs,
 		/obj/item/bodypart/taur/biglegsstanced,
+		/obj/item/bodypart/taur/goat, //OV Add
 		/obj/item/bodypart/taur/satyr, //OV ADD
 	)
 	//OV Add End
