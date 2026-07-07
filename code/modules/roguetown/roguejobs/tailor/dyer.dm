@@ -355,33 +355,24 @@ var/list/used_colors
 		if(!istype(armor_item) || armor_item.armor_class != ARMOR_CLASS_HEAVY)
 			return
 		var/which = href_list["select_tasset1"] ? "tasset1" : "tasset2"
-		if(HAS_TRAIT(usr, TRAIT_DYES))
-			var/choice
-			var/input_type = alert(usr, "Input Choice", "[which == "tasset1" ? "Tasset 1" : "Tasset 2"] Dye", "Color Wheel", "Color Preset")
-			if(input_type != "Color Wheel")
-				choice = input(usr, "Choose your dye:", "Dyes", null) as null|anything in used_colors
-				if(!choice)
-					return
-				if(which == "tasset1")
-					activecolor_detail = used_colors[choice]
-				else
-					activecolor_altdetail = used_colors[choice]
-			else
-				var/picked = sanitize_hexcolor(color_pick_sanitized(usr, "Choose your dye:", "Dyes", "#FFFFFF", 0.2, 1), 6, TRUE)
-				if(picked == "#000000")
-					picked = "#FFFFFF"
-				if(which == "tasset1")
-					activecolor_detail = picked
-				else
-					activecolor_altdetail = picked
-		else
-			var/choice = input(usr,"Choose your dye:","Dyes",null) as null|anything in GLOB.colorlist
+		var/choice
+		var/input_type = alert(usr, "Input Choice", "[which == "tasset1" ? "Tasset 1" : "Tasset 2"] Dye", "Color Wheel", "Color Preset")
+		if(input_type != "Color Wheel")
+			choice = input(usr, "Choose your dye:", "Dyes", null) as null|anything in used_colors
 			if(!choice)
 				return
 			if(which == "tasset1")
-				activecolor_detail = GLOB.colorlist[choice]
+				activecolor_detail = used_colors[choice]
 			else
-				activecolor_altdetail = GLOB.colorlist[choice]
+				activecolor_altdetail = used_colors[choice]
+		else
+			var/picked = sanitize_hexcolor(color_pick_sanitized(usr, "Choose your dye:", "Dyes", "#FFFFFF", 0.2, 1), 6, TRUE)
+			if(picked == "#000000")
+				picked = "#FFFFFF"
+			if(which == "tasset1")
+				activecolor_detail = picked
+			else
+				activecolor_altdetail = picked
 		interact(usr)
 
 	if(href_list["paint_tasset1"] || href_list["paint_tasset2"])
