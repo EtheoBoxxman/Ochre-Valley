@@ -1167,18 +1167,18 @@ There are several things that need to be remembered:
 					cloak_overlay.pixel_y += dna.species.offset_features[OFFSET_CLOAK_F][2]
 			if(cloak.alternate_worn_layer == TABARD_LAYER)
 				//OV EDIT START overlays_standing[TABARD_LAYER] = cloak_overlay
-				if(taur?.taur_clothing_category && istype(cloak, /obj/item/clothing/cloak/tabard))
+				if(taur?.taur_clothing_category && istype(cloak, /obj/item/clothing/cloak/tabard/stabard))
+					var/mutable_appearance/taur_cap_ov = mutable_appearance('modular_ochrevalley/icons/roguetown/clothing/onmob/taur_clothing.dmi', "caparison_[taur.taur_clothing_category]", -TABARD_LAYER)
+					taur_cap_ov.pixel_x = taur.offset_x
+					if(cloak.color)
+						taur_cap_ov.color = cloak.color
+					overlays_standing[TABARD_LAYER] = list(cloak_overlay, taur_cap_ov)
+				else if(taur?.taur_clothing_category && istype(cloak, /obj/item/clothing/cloak/tabard))
 					var/mutable_appearance/taur_tabard_ov = mutable_appearance('modular_ochrevalley/icons/roguetown/clothing/onmob/taur_clothing.dmi', "caparison-tabard_[taur.taur_clothing_category]", -TABARD_LAYER)
 					taur_tabard_ov.pixel_x = taur.offset_x
 					if(cloak.color)
 						taur_tabard_ov.color = cloak.color
 					overlays_standing[TABARD_LAYER] = list(cloak_overlay, taur_tabard_ov)
-				/*else if(taur?.taur_clothing_category && istype(cloak, /obj/item/clothing/cloak/tabard/stabard)
-					var/mutable_appearance/taur_cap_ov = mutable_appearance('modular_ochrevalley/icons/roguetown/clothing/onmob/taur_clothing.dmi', "caparison_[taur.taur_clothing_category]", -TABARD_LAYER)
-					taur_cap_ov.pixel_x = taur.offset_x
-					if(cloak.color)
-						taur_cap_ov.color = cloak.color
-					overlays_standing[TABARD_LAYER] = list(cloak_overlay, taur_cap_ov)*/
 				else
 					overlays_standing[TABARD_LAYER] = cloak_overlay
 				//OV EDIT END
