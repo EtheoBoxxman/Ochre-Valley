@@ -237,7 +237,6 @@
 	name = "Bunny Taur Body"
 	icon = 'modular_causticcove/icons/mob/taurs/taur.dmi'
 	offset_x = -16
-	taur_clothing_category = "m" //OV ADD
 	taur_icon_state = "bigbunny_s"
 
 	has_taur_color = TRUE
@@ -263,5 +262,13 @@
 
 	offset_x = -16
 	taur_icon_state = "biglegsstanced_s"
+
+	has_taur_color = TRUE
+
+/obj/item/bodypart/taur/sloog
+	name = "Slugcat Body"
+	offset_x = -16
+	taur_clothing_category = "r"
+	taur_icon_state = "sloog_s"
 
 	has_taur_color = TRUE

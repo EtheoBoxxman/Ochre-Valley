@@ -17,6 +17,10 @@ var/list/used_colors
 	var/activecolor = "#FFFFFF"
 	var/activecolor_detail = "#FFFFFF"
 	var/activecolor_altdetail = "#FFFFFF"
+	//OV ADD START
+	var/tauractivecolor_detail = "#FFFFFF"
+	var/tauractivecolor_altdetail = "#FFFFFF"
+	//OV ADD END
 	var/list/allowed_types = list(
 			/obj/item/clothing,
 			/obj/item/storage,
@@ -348,34 +352,29 @@ var/list/used_colors
 		interact(usr)
 
 	//OV ADD START - TAUR BARDING
-	if(href_list["select_tasset1"] || href_list["select_tasset2"])
+	if(href_list["select_tasset1"])
 		if(!inserted || !ishuman(usr))
 			return
 		var/obj/item/clothing/armor_item = inserted
 		if(!istype(armor_item) || armor_item.armor_class != ARMOR_CLASS_HEAVY)
 			return
-		var/which = href_list["select_tasset1"] ? "tasset1" : "tasset2"
-		var/choice
-		var/input_type = alert(usr, "Input Choice", "[which == "tasset1" ? "Tasset 1" : "Tasset 2"] Dye", "Color Wheel", "Color Preset")
-		if(input_type != "Color Wheel")
-			choice = input(usr, "Choose your dye:", "Dyes", null) as null|anything in used_colors
-			if(!choice)
-				return
-			if(which == "tasset1")
-				activecolor_detail = used_colors[choice]
-			else
-				activecolor_altdetail = used_colors[choice]
-		else
-			var/picked = sanitize_hexcolor(color_pick_sanitized(usr, "Choose your dye:", "Dyes", "#FFFFFF", 0.2, 1), 6, TRUE)
-			if(picked == "#000000")
-				picked = "#FFFFFF"
-			if(which == "tasset1")
-				activecolor_detail = picked
-			else
-				activecolor_altdetail = picked
+		var/c = pick_dye(usr, tauractivecolor_detail, "Taur Tasset Primary")
+		if(!c) return
+		tauractivecolor_detail = c
 		interact(usr)
 
-	if(href_list["paint_tasset1"] || href_list["paint_tasset2"])
+	if(href_list["select_tasset2"])
+		if(!inserted || !ishuman(usr))
+			return
+		var/obj/item/clothing/armor_item = inserted
+		if(!istype(armor_item) || armor_item.armor_class != ARMOR_CLASS_HEAVY)
+			return
+		var/c = pick_dye(usr, tauractivecolor_altdetail, "Taur Tasset Secondary")
+		if(!c) return
+		tauractivecolor_altdetail = c
+		interact(usr)
+
+	if(href_list["paint_tasset1"])
 		if(!inserted || !ishuman(usr))
 			return
 		var/obj/item/clothing/armor_item = inserted
@@ -385,16 +384,13 @@ var/list/used_colors
 		var/obj/item/bodypart/taur/taur = H.get_taur_tail()
 		if(!taur?.taur_clothing_category)
 			return
-		if(href_list["paint_tasset1"])
-			taur.tasset1_color = activecolor_detail
-		else
-			taur.tasset2_color = activecolor_altdetail
+		taur.tasset1_color = tauractivecolor_detail
 		playsound(src, "bubbles", 50, 1)
 		H.update_inv_armor()
 		H.update_inv_shirt()
 		interact(usr)
 
-	if(href_list["clear_tasset1"] || href_list["clear_tasset2"])
+	if(href_list["paint_tasset2"])
 		if(!inserted || !ishuman(usr))
 			return
 		var/obj/item/clothing/armor_item = inserted
@@ -404,10 +400,39 @@ var/list/used_colors
 		var/obj/item/bodypart/taur/taur = H.get_taur_tail()
 		if(!taur?.taur_clothing_category)
 			return
-		if(href_list["clear_tasset1"])
-			taur.tasset1_color = null
-		else
-			taur.tasset2_color = null
+		taur.tasset2_color = tauractivecolor_altdetail
+		playsound(src, "bubbles", 50, 1)
+		H.update_inv_armor()
+		H.update_inv_shirt()
+		interact(usr)
+
+	if(href_list["clear_tasset1"])
+		if(!inserted || !ishuman(usr))
+			return
+		var/obj/item/clothing/armor_item = inserted
+		if(!istype(armor_item) || armor_item.armor_class != ARMOR_CLASS_HEAVY)
+			return
+		var/mob/living/carbon/human/H = usr
+		var/obj/item/bodypart/taur/taur = H.get_taur_tail()
+		if(!taur?.taur_clothing_category)
+			return
+		taur.tasset1_color = "#FFFFFF"
+		playsound(src, "bubbles", 50, 1)
+		H.update_inv_armor()
+		H.update_inv_shirt()
+		interact(usr)
+
+	if(href_list["clear_tasset2"])
+		if(!inserted || !ishuman(usr))
+			return
+		var/obj/item/clothing/armor_item = inserted
+		if(!istype(armor_item) || armor_item.armor_class != ARMOR_CLASS_HEAVY)
+			return
+		var/mob/living/carbon/human/H = usr
+		var/obj/item/bodypart/taur/taur = H.get_taur_tail()
+		if(!taur?.taur_clothing_category)
+			return
+		taur.tasset2_color = "#FFFFFF"
 		playsound(src, "bubbles", 50, 1)
 		H.update_inv_armor()
 		H.update_inv_shirt()
