@@ -1595,6 +1595,17 @@
 		away_from_keyboard = TRUE
 		manual_afk = TRUE
 
+/mob/living/verb/toggle_scening() // OV Add Start
+	set name = "Toggle Scene Privacy"
+	set category = "IC"
+	set desc = "Mark yourself as in a scene, to prevent scrying!"
+	if(do_not_disturb)
+		to_chat(src, span_notice("You are no longer marked as private."))
+		do_not_disturb = FALSE
+	else
+		to_chat(src, span_notice("You are now marked as private and can no longer be scried."))
+		do_not_disturb = TRUE // OV Add End
+
 /mob/living/proc/absorb_langs()		//This should be called on the predator in the exchange
 	if(!mind || !mind.language_holder)
 		return
