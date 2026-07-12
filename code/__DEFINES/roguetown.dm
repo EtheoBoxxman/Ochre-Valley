@@ -66,7 +66,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/dullahan,\
 	/datum/species/ooze,\
 	/datum/species/dwarf/gnome,\
-	/datum/species/harpy\
+	/datum/species/harpy\  // OV Edit Add
 )
 
 #define RACES_RESPECTED \

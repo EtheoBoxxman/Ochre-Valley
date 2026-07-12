@@ -5,8 +5,8 @@
 
 /obj/item/organ/vocal_cords //organs that are activated through speech with the :x/MODE_KEY_VOCALCORDS channel
 	name = "vocal cords"
-	icon = 'icons/obj/surgery.dmi'
-	icon_state = "vocal_cords"
+	icon = 'icons/obj/surgery.dmi' // OV Edit
+	icon_state = "vocal_cords"  // OV Edit
 	zone = BODY_ZONE_PRECISE_MOUTH
 	slot = ORGAN_SLOT_VOICE
 	gender = PLURAL

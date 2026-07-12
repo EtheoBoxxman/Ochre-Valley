@@ -152,7 +152,7 @@
 /obj/structure/table/CanPass(atom/movable/mover, turf/target)
 	if(istype(mover) && (mover.pass_flags & PASSTABLE))
 		return 1
-	if(isliving(mover)) // OV Edit
+	if(isliving(mover)) // OV Add
 		var/mob/living/M = mover
 		if(M.movement_type & FLYING)
 			return 1
@@ -609,7 +609,7 @@
 /obj/structure/rack/CanPass(atom/movable/mover, turf/target)
 	if(src.density == 0) //Because broken racks -Agouri |TODO: SPRITE!|
 		return 1
-	if(isliving(mover)) // OV Edit
+	if(isliving(mover)) // OV Add
 		var/mob/living/M = mover
 		if(M.movement_type & FLYING)
 			return 1

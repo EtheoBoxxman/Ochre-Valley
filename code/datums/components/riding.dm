@@ -66,7 +66,7 @@
 	for(var/mob/M in AM.buckled_mobs)
 		if(!istype(M, /mob/living))
 			continue
-		rider = M
+		rider = M // OV Edit
 		ride_check(M)
 		M.set_glide_size(AM.glide_size)
 		if(rider.m_intent == MOVE_INTENT_RUN)
