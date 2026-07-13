@@ -230,8 +230,6 @@
 #include "code\__DEFINES\mobs\simplemob_health.dm"
 #include "code\__DEFINES\mobs\simplemob_movement_speed.dm"
 #include "code\datums\sexcon2\ov_sex_helpers.dm"
-#include "code\modules\mob\living\carbon\human\voicepacks\female\harpy.dm"
-#include "code\modules\mob\living\carbon\human\voicepacks\male\harpy.dm"
 
 //Caustic Modular Defines
 #include "modular_causticcove\code\__DEFINES\appearance_changer.dm"
@@ -3665,6 +3663,8 @@
 #include "modular_causticcove\code\modules\grazer\virtue.dm"
 #include "modular_causticcove\code\modules\hallucinations\Hallucination.dm"
 #include "modular_causticcove\code\modules\jobs\job_types\roguetown\adventurer\types\combat\rogue.dm"
+#include "modular_ochrevalley\code\modules\mob\living\carbon\human\voicepacks\female\harpy.dm"
+#include "modular_ochrevalley\code\modules\mob\living\carbon\human\voicepacks\male\harpy.dm"
 #include "modular_causticcove\code\modules\juices\juices.dm"
 #include "modular_causticcove\code\modules\juices\varmods.dm"
 #include "modular_causticcove\code\modules\merporgans\belly.dm"
