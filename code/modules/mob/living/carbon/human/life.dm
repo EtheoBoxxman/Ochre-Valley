@@ -109,10 +109,12 @@
 		if(cf && !cf.ephemeral && mind)
 			cf.flaw_on_moved(src, OldLoc, Dir)
 //Caustic Edit End
-	if(do_not_disturb) // OV Add Start - To prevent toggling scrying protections permanently
+	// OV Edit Start - To prevent toggling scrying protections permanently
+	if(do_not_disturb) 
 		if(!isbelly(loc))
 			do_not_disturb = FALSE
-			to_chat(src, span_notice("You are no longer marked as private and can be scried.")) // OV Add End
+			to_chat(src, span_notice("You are no longer marked as private and can be scried.")) 
+	// OV Edit End
 
 
 /mob/living/carbon/human/DeadLife()

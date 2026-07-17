@@ -115,4 +115,4 @@
 	var/size_multiplier = 1 //multiplier for the mob's icon size
 	var/faction_bump_vore = FALSE	// Don't bump nom mobs of the same faction
 
-	var/do_not_disturb = FALSE	// OV Add - ERP Scrying Privacy
+	var/do_not_disturb = FALSE	// ERP Scrying Privacy
